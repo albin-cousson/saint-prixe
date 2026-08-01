@@ -1,0 +1,44 @@
+---
+import { urlFor } from '../../lib/sanity/image';
+import { formatDateFr } from '../../lib/status';
+
+interface Props {
+  name: string;
+  photo?: any;
+  birthDate?: string;
+  sire?: string;
+  dam?: string;
+  titles?: string[];
+  href?: string;
+}
+const { name, photo, birthDate, sire, dam, titles, href } = Astro.props;
+const hasPedigree = birthDate || sire || dam || (titles && titles.length > 0);
+
+const Tag = href ? 'a' : 'div';
+---
+
+<Tag {...(href ? { href } : {})} class="group block bg-white border border-border overflow-hidden">
+  <div class="aspect-[4/3] bg-placeholder overflow-hidden">
+    {photo && (
+      <img
+        src={urlFor(photo)?.width(600).height(450).url()}
+        alt={name}
+        loading="lazy"
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+      />
+    )}
+  </div>
+  <div class="p-6 text-center">
+    <h3 class="font-display font-bold text-lg mb-1">{name}</h3>
+    {hasPedigree && (
+      <div class="text-xs text-muted space-y-0.5 mt-2">
+        {birthDate && <p>Né(e) le {formatDateFr(birthDate)}</p>}
+        {sire && <p>Père : {sire}</p>}
+        {dam && <p>Mère : {dam}</p>}
+      </div>
+    )}
+    {titles && titles.length > 0 && (
+      <p class="text-xs text-gold-deep mt-2 leading-relaxed">{titles.join(' · ')}</p>
+    )}
+  </div>
+</Tag>

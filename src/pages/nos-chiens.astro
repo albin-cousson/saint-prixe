@@ -1,0 +1,52 @@
+---
+import Layout from '../layouts/Layout.astro';
+import DogCard from '../components/dogs/DogCard.astro';
+import { sanityClient } from 'sanity:client';
+import { DOGS_BY_BREED_AND_SEX_QUERY } from '../lib/sanity/queries';
+
+const males = (await sanityClient.fetch(DOGS_BY_BREED_AND_SEX_QUERY, { breed: 'Bearded Collie', sex: 'Mâle' })).slice(0, 3);
+const femelles = (await sanityClient.fetch(DOGS_BY_BREED_AND_SEX_QUERY, { breed: 'Bearded Collie', sex: 'Femelle' })).slice(0, 3);
+---
+
+<Layout title="Nos Chiens" description="Découvrez les Bearded Collies de l'élevage De Saint Prixe.">
+  <section class="px-6 lg:px-10 py-16 md:py-20">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-14">Nos Chiens</h1>
+
+      <div class="mb-16">
+        <h2 class="font-display font-bold text-2xl text-center mb-8">Nos Mâles</h2>
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+          {males.map((d: any) => (
+            <DogCard name={d.name} photo={d.photo} birthDate={d.birthDate} sire={d.sire} dam={d.dam} titles={d.titles} href={`/nos-chiens/${d.slug?.current}`} />
+          ))}
+        </div>
+        <p class="text-center">
+          <a href="/nos-males" class="inline-block border border-ink px-6 py-2.5 text-sm font-semibold hover:bg-ink hover:text-cream transition-colors">
+            Tous les découvrir
+          </a>
+        </p>
+      </div>
+
+      <div class="mb-16">
+        <h2 class="font-display font-bold text-2xl text-center mb-8">Nos Femelles</h2>
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+          {femelles.map((d: any) => (
+            <DogCard name={d.name} photo={d.photo} birthDate={d.birthDate} sire={d.sire} dam={d.dam} titles={d.titles} href={`/nos-chiens/${d.slug?.current}`} />
+          ))}
+        </div>
+        <p class="text-center">
+          <a href="/nos-femelles" class="inline-block border border-ink px-6 py-2.5 text-sm font-semibold hover:bg-ink hover:text-cream transition-colors">
+            Tous les découvrir
+          </a>
+        </p>
+      </div>
+
+      <div class="text-center">
+        <h2 class="font-display font-bold text-2xl mb-4">Nos Chiots</h2>
+        <a href="/nos-chiots" class="inline-block bg-gold hover:bg-gold-deep text-white px-6 py-3 text-sm font-semibold transition-colors">
+          Voir nos portées ›
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,52 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { urlFor } from '../../lib/sanity/image';
+import { formatDateFr } from '../../lib/status';
+import { sanityClient } from 'sanity:client';
+import { DOG_SLUGS_QUERY, DOG_BY_SLUG_QUERY } from '../../lib/sanity/queries';
+
+export async function getStaticPaths() {
+  const slugs = await sanityClient.fetch(DOG_SLUGS_QUERY);
+  return slugs.map((s: { slug: string }) => ({ params: { slug: s.slug } }));
+}
+
+const { slug } = Astro.params;
+const dog = await sanityClient.fetch(DOG_BY_SLUG_QUERY, { slug });
+if (!dog) return Astro.redirect('/nos-chiens');
+---
+
+<Layout title={dog.name} description={`${dog.name} — ${dog.breed}, élevage De Saint Prixe.`}>
+  <section class="px-6 lg:px-10 py-16 md:py-20">
+    <div class="max-w-3xl mx-auto text-center">
+      <div class="w-56 h-56 mx-auto rounded-full overflow-hidden border-[5px] border-white shadow-[0_10px_26px_rgba(0,0,0,0.18)] bg-placeholder mb-6">
+        {dog.photo && (
+          <img src={urlFor(dog.photo)?.width(500).height(500).url()} alt={dog.name} class="w-full h-full object-cover" />
+        )}
+      </div>
+      <h1 class="font-display font-bold text-3xl md:text-4xl mb-4">{dog.name}</h1>
+
+      <div class="text-sm text-muted space-y-1 mb-4">
+        {dog.birthDate && <p>Né(e) le {formatDateFr(dog.birthDate)}</p>}
+        {dog.sire && <p>Père : {dog.sire}</p>}
+        {dog.dam && <p>Mère : {dog.dam}</p>}
+      </div>
+
+      {dog.titles && dog.titles.length > 0 && (
+        <div class="mt-6">
+          <h2 class="font-display font-bold text-lg mb-2">Palmarès</h2>
+          <ul class="text-sm text-muted space-y-1">
+            {dog.titles.map((t: string) => <li>{t}</li>)}
+          </ul>
+        </div>
+      )}
+
+      {dog.gallery && dog.gallery.length > 0 && (
+        <div class="grid grid-cols-3 gap-3 mt-10">
+          {dog.gallery.map((img: any) => (
+            <img src={urlFor(img)?.width(400).height(400).url()} alt="" class="aspect-square object-cover w-full" loading="lazy" />
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>

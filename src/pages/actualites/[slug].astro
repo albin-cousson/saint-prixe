@@ -1,0 +1,37 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { PortableText } from 'astro-portabletext';
+import { urlFor } from '../../lib/sanity/image';
+import { formatDateFr } from '../../lib/status';
+import { sanityClient } from 'sanity:client';
+import { BLOG_POST_SLUGS_QUERY, BLOG_POST_BY_SLUG_QUERY } from '../../lib/sanity/queries';
+
+export async function getStaticPaths() {
+  const slugs = await sanityClient.fetch(BLOG_POST_SLUGS_QUERY);
+  return slugs.map((s: { slug: string }) => ({ params: { slug: s.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = await sanityClient.fetch(BLOG_POST_BY_SLUG_QUERY, { slug });
+if (!post) return Astro.redirect('/actualites');
+---
+
+<Layout title={post.title} description={post.excerpt}>
+  <article class="px-6 lg:px-10 py-16 md:py-20">
+    <div class="max-w-2xl mx-auto">
+      <a href="/actualites" class="text-sm text-muted-2 hover:text-gold-deep transition-colors">‹ Toutes les actualités</a>
+      <h1 class="font-display font-bold text-3xl md:text-4xl mt-4 mb-2">{post.title}</h1>
+      {post.publishedAt && <p class="text-sm text-muted-2 mb-8">{formatDateFr(post.publishedAt)}</p>}
+      {post.coverImage && (
+        <img
+          src={urlFor(post.coverImage)?.width(1000).url()}
+          alt=""
+          class="w-full mb-10"
+        />
+      )}
+      <div class="prose-body text-[15px] leading-relaxed text-muted">
+        <PortableText value={post.body} />
+      </div>
+    </div>
+  </article>
+</Layout>

@@ -1,0 +1,73 @@
+---
+import { NAV_ITEMS } from '../lib/nav';
+
+const currentPath = Astro.url.pathname;
+function isActive(href: string) {
+  return href === '/' ? currentPath === '/' : currentPath.startsWith(href);
+}
+---
+
+<header class="bg-ink text-cream sticky top-0 z-50">
+  <div class="mx-auto max-w-7xl px-6 lg:px-10 flex items-center justify-between py-4">
+    <a href="/" class="flex flex-col leading-none shrink-0">
+      <span class="font-display font-bold text-xl md:text-2xl tracking-wide">DE SAINT PRIXE</span>
+      <span class="text-[10px] md:text-xs tracking-[0.2em] text-gold mt-1">ÉLEVAGE DE BEARDED COLLIE</span>
+      <svg class="mt-1.5 text-gold" width="90" height="12" viewBox="0 0 120 16" fill="none" aria-hidden="true">
+        <path d="M0 8c20-6 30 6 46 0" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path>
+        <path d="M60 5.5c-1.6-4.6-8.4-4.6-9.4 0.4-0.9 4.4 9.4 8.6 9.4 8.6s10.3-4.2 9.4-8.6c-1-5-7.8-5-9.4-0.4z" fill="currentColor"></path>
+        <path d="M120 8c-20-6-30 6-46 0" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path>
+      </svg>
+    </a>
+
+    <nav class="hidden lg:flex items-center gap-7">
+      {NAV_ITEMS.map((item) => (
+        <a
+          href={item.href}
+          class:list={[
+            'text-sm tracking-wide transition-colors hover:text-gold',
+            isActive(item.href) ? 'text-gold' : 'text-cream/90',
+          ]}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <button
+      id="menu-toggle"
+      class="lg:hidden text-cream p-2 -mr-2"
+      aria-label="Ouvrir le menu"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"></path>
+      </svg>
+    </button>
+  </div>
+
+  <nav id="mobile-menu" class="lg:hidden hidden flex-col border-t border-cream/10 px-6 py-4 gap-1">
+    {NAV_ITEMS.map((item) => (
+      <a
+        href={item.href}
+        class:list={[
+          'block py-2.5 text-sm tracking-wide',
+          isActive(item.href) ? 'text-gold' : 'text-cream/90',
+        ]}
+      >
+        {item.label}
+      </a>
+    ))}
+  </nav>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  toggle?.addEventListener('click', () => {
+    const isOpen = !menu?.classList.contains('hidden');
+    menu?.classList.toggle('hidden');
+    menu?.classList.toggle('flex');
+    toggle.setAttribute('aria-expanded', String(!isOpen));
+  });
+</script>

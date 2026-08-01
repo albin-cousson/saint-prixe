@@ -1,0 +1,88 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Flourish from '../../components/Flourish.astro';
+import PuppyCarousel from '../../components/mariages/PuppyCarousel';
+import { sanityClient } from 'sanity:client';
+import { urlFor } from '../../lib/sanity/image';
+import { formatDateFr } from '../../lib/status';
+import { MARIAGE_SLUGS_QUERY, MARIAGE_BY_SLUG_QUERY } from '../../lib/sanity/queries';
+
+export async function getStaticPaths() {
+  const slugs = await sanityClient.fetch(MARIAGE_SLUGS_QUERY);
+  return slugs.map((s: { slug: string }) => ({ params: { slug: s.slug } }));
+}
+
+const { slug } = Astro.params;
+const mariage = await sanityClient.fetch(MARIAGE_BY_SLUG_QUERY, { slug });
+
+if (!mariage) return Astro.redirect('/nos-chiots');
+
+const puppies = (mariage.puppies || []) as any[];
+---
+
+<Layout title={`${mariage.dogGroomName} & ${mariage.dogBrideName}`} description={mariage.description}>
+  <section class="bg-cream px-6 lg:px-10 py-16 md:py-20">
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-white border border-border p-10 md:p-12 text-center mb-16">
+        <div class="flex items-center justify-center mb-6">
+          <div class="w-[150px] h-[150px] md:w-[220px] md:h-[220px] -mr-7 z-[1] rounded-full overflow-hidden border-[5px] border-white shadow-[0_10px_26px_rgba(0,0,0,0.18)] bg-placeholder">
+            {mariage.dogGroomPhoto && (
+              <img src={urlFor(mariage.dogGroomPhoto)?.width(440).height(440).url()} alt="" class="w-full h-full object-cover" />
+            )}
+          </div>
+          <div class="w-[58px] h-[58px] rounded-full bg-gold text-white flex items-center justify-center font-display text-2xl shadow-[0_4px_12px_rgba(0,0,0,0.18)] z-[2]" aria-hidden="true">
+            &amp;
+          </div>
+          <div class="w-[150px] h-[150px] md:w-[220px] md:h-[220px] -ml-7 rounded-full overflow-hidden border-[5px] border-white shadow-[0_10px_26px_rgba(0,0,0,0.18)] bg-placeholder">
+            {mariage.dogBridePhoto && (
+              <img src={urlFor(mariage.dogBridePhoto)?.width(440).height(440).url()} alt="" class="w-full h-full object-cover" />
+            )}
+          </div>
+        </div>
+
+        <h1 class="font-display font-bold text-3xl md:text-4xl mb-1.5">
+          {mariage.dogGroomName} &amp; {mariage.dogBrideName}
+        </h1>
+        <Flourish width={140} height={16} class="mx-auto mb-4" />
+
+        {mariage.description && (
+          <p class="max-w-[60ch] mx-auto text-[15px] leading-relaxed text-muted mb-2">{mariage.description}</p>
+        )}
+
+        {mariage.litterDate && (
+          <p class="text-sm text-muted-2 mt-3.5">🐾 Chiots nés le {formatDateFr(mariage.litterDate)}</p>
+        )}
+      </div>
+
+      <h2 class="font-display font-bold text-2xl text-center mb-8">
+        Les chiots de {mariage.dogGroomName} &amp; {mariage.dogBrideName}
+      </h2>
+
+      {puppies.length === 0 ? (
+        <p class="text-center text-muted-2 italic py-10">
+          Aucun chiot pour le moment. Revenez bientôt ou contactez-nous pour être averti dès qu'une place se
+          libère.
+        </p>
+      ) : (
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {puppies.map((p: any) => {
+            const images = [p.photo, ...(p.gallery || [])]
+              .filter(Boolean)
+              .map((img: any) => urlFor(img)?.width(700).height(875).url())
+              .filter(Boolean) as string[];
+            return (
+              <PuppyCarousel
+                client:visible
+                title={p.title}
+                gender={p.gender}
+                color={p.color}
+                status={p.status}
+                images={images}
+              />
+            );
+          })}
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>

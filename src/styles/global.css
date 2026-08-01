@@ -1,0 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap");
+@import "tailwindcss";
+
+/* Exact brand tokens extracted from the live site's own CSS (elevagedesaintprixe.com),
+   not guessed — see --color_N custom properties on the live site. */
+@theme {
+  --color-ink: #3b3b3b;
+  --color-cream: #faf8f0;
+  --color-border: #e7dfd8;
+  --color-gold: #d9b280;
+  --color-gold-deep: #b9895a;
+  --color-muted: #6b6a68;
+  --color-muted-2: #9b9a96;
+  --color-placeholder: #efe8db;
+
+  --font-display: "Libre Baskerville", Georgia, serif;
+  --font-body: "din-next-w01-light", Arial, sans-serif;
+
+  /* The live site's own components use --rd:0 (sharp corners) almost everywhere;
+     rounded shapes are reserved for genuinely circular photo framing, done per-component. */
+  --radius-none: 0px;
+}
+
+@font-face {
+  font-family: "din-next-w01-light";
+  font-style: normal;
+  font-weight: 400;
+  src: url("https://static.parastorage.com/fonts/v2/eca8b0cd-45d8-43cf-aee7-ca462bc5497c/v1/din-next-w01-light.woff2")
+    format("woff2");
+  font-display: swap;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    background: #ffffff;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-gold-deep);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .prose-body p {
+    margin-bottom: 1em;
+  }
+  .prose-body p:last-child {
+    margin-bottom: 0;
+  }
+  .prose-body h3 {
+    font-size: 1.15rem;
+    margin: 1.5em 0 0.5em;
+  }
+}

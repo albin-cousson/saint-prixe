@@ -1,0 +1,24 @@
+---
+interface Props {
+  width?: number;
+  height?: number;
+  class?: string;
+}
+const { width = 96, height = 13, class: className = '' } = Astro.props;
+---
+
+<svg
+  class={`text-gold ${className}`}
+  width={width}
+  height={height}
+  viewBox="0 0 120 16"
+  fill="none"
+  aria-hidden="true"
+>
+  <path d="M0 8c20-6 30 6 46 0" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path>
+  <path
+    d="M60 5.5c-1.6-4.6-8.4-4.6-9.4 0.4-0.9 4.4 9.4 8.6 9.4 8.6s10.3-4.2 9.4-8.6c-1-5-7.8-5-9.4-0.4z"
+    fill="currentColor"
+  ></path>
+  <path d="M120 8c-20-6-30 6-46 0" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path>
+</svg>

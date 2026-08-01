@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const email = 'aurelie.cousson68@gmail.com';
+const phone = '06 70 91 05 26';
+const phoneHref = '0670910526';
+const addressLines = ["24 rue d'Issenheim", '68190 Raedersheim, France'];
+---
+
+<Layout title="Contact" description="Contactez l'élevage De Saint Prixe.">
+  <section class="px-6 lg:px-10 py-16 md:py-20">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-14">Contact</h1>
+
+      <div class="grid md:grid-cols-2 gap-12">
+        <div>
+          <h2 class="font-display font-bold text-xl mb-5">Nous écrire</h2>
+          <form id="contact-form" class="space-y-4">
+            <div>
+              <label for="name" class="block text-sm font-medium mb-1">Nom</label>
+              <input id="name" name="name" type="text" required class="w-full border border-border px-4 py-2.5 text-sm focus:outline-none focus:border-gold-deep" />
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium mb-1">E-mail</label>
+              <input id="email" name="email" type="email" required class="w-full border border-border px-4 py-2.5 text-sm focus:outline-none focus:border-gold-deep" />
+            </div>
+            <div>
+              <label for="message" class="block text-sm font-medium mb-1">Message</label>
+              <textarea id="message" name="message" rows="5" required class="w-full border border-border px-4 py-2.5 text-sm focus:outline-none focus:border-gold-deep"></textarea>
+            </div>
+            <button type="submit" class="bg-gold hover:bg-gold-deep text-white font-semibold px-6 py-3 text-sm transition-colors">
+              Envoyer
+            </button>
+          </form>
+        </div>
+
+        <div>
+          <h2 class="font-display font-bold text-xl mb-5">Coordonnées</h2>
+          <div class="space-y-3 text-sm text-muted">
+            <a href={`tel:${phoneHref}`} class="block hover:text-gold-deep transition-colors">{phone}</a>
+            <a href={`mailto:${email}`} class="block hover:text-gold-deep transition-colors">{email}</a>
+            <p>
+              {addressLines.map((line) => (
+                <>
+                  {line}<br />
+                </>
+              ))}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script define:vars={{ email }}>
+  const form = document.getElementById('contact-form');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const subject = encodeURIComponent(`Message de ${data.get('name')} — via le site`);
+    const body = encodeURIComponent(`${data.get('message')}\n\nRépondre à : ${data.get('email')}`);
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+  });
+</script>

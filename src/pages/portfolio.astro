@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { urlFor } from '../lib/sanity/image';
+import { sanityClient } from 'sanity:client';
+import { PORTFOLIO_PAGE_QUERY } from '../lib/sanity/queries';
+
+const page = await sanityClient.fetch(PORTFOLIO_PAGE_QUERY);
+const images = page?.images || [];
+---
+
+<Layout title="Portfolio" description="Portfolio photo de l'élevage De Saint Prixe.">
+  <section class="px-6 lg:px-10 py-16 md:py-20">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-14">Portfolio</h1>
+      <div class="columns-2 sm:columns-3 lg:columns-4 gap-4 space-y-4">
+        {images.map((img: any) => (
+          <img
+            src={urlFor(img)?.width(600).url()}
+            alt=""
+            loading="lazy"
+            class="w-full block"
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
