@@ -9,6 +9,10 @@
   --color-border: #e7dfd8;
   --color-gold: #d9b280;
   --color-gold-deep: #b9895a;
+  /* Darker than gold-deep, specifically for text set on white/cream — gold-deep as
+     text there measures ~3:1, below WCAG AA's 4.5:1. Use gold/gold-deep freely as
+     fills, borders, and text-on-dark; use gold-text only for text on light backgrounds. */
+  --color-gold-text: #8a5a2b;
   --color-muted: #6b6a68;
   --color-muted-2: #9b9a96;
   --color-placeholder: #efe8db;

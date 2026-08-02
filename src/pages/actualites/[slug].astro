@@ -19,7 +19,7 @@ if (!post) return Astro.redirect('/actualites');
 <Layout title={post.title} description={post.excerpt}>
   <article class="px-6 lg:px-10 py-16 md:py-20">
     <div class="max-w-2xl mx-auto">
-      <a href="/actualites" class="text-sm text-muted-2 hover:text-gold-deep transition-colors">‹ Toutes les actualités</a>
+      <a href="/actualites" class="text-sm text-muted-2 hover:text-gold-text transition-colors">‹ Toutes les actualités</a>
       <h1 class="font-display font-bold text-3xl md:text-4xl mt-4 mb-2">{post.title}</h1>
       {post.publishedAt && <p class="text-sm text-muted-2 mb-8">{formatDateFr(post.publishedAt)}</p>}
       {post.coverImage && (

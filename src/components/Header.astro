@@ -5,6 +5,9 @@ const currentPath = Astro.url.pathname;
 function isActive(href: string) {
   return href === '/' ? currentPath === '/' : currentPath.startsWith(href);
 }
+function isActiveGroup(item: (typeof NAV_ITEMS)[number]) {
+  return isActive(item.href) || (item.children?.some((c) => isActive(c.href)) ?? false);
+}
 ---
 
 <header class="bg-ink text-cream sticky top-0 z-50">
@@ -20,17 +23,49 @@ function isActive(href: string) {
     </a>
 
     <nav class="hidden lg:flex items-center gap-7">
-      {NAV_ITEMS.map((item) => (
-        <a
-          href={item.href}
-          class:list={[
-            'text-sm tracking-wide transition-colors hover:text-gold',
-            isActive(item.href) ? 'text-gold' : 'text-cream/90',
-          ]}
-        >
-          {item.label}
-        </a>
-      ))}
+      {NAV_ITEMS.map((item) =>
+        item.children ? (
+          <div class="relative group">
+            <a
+              href={item.href}
+              class:list={[
+                'inline-flex items-center gap-1 text-sm tracking-wide transition-colors hover:text-gold',
+                isActiveGroup(item) ? 'text-gold' : 'text-cream/90',
+              ]}
+            >
+              {item.label}
+              <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true" class="opacity-70">
+                <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+              </svg>
+            </a>
+            <div class="absolute left-0 top-full pt-3 hidden group-hover:block group-focus-within:block">
+              <div class="bg-ink border border-cream/10 min-w-[170px] py-2 shadow-[0_12px_24px_rgba(0,0,0,0.25)]">
+                {item.children.map((child) => (
+                  <a
+                    href={child.href}
+                    class:list={[
+                      'block px-4 py-2 text-sm tracking-wide transition-colors hover:text-gold hover:bg-white/5',
+                      isActive(child.href) ? 'text-gold' : 'text-cream/90',
+                    ]}
+                  >
+                    {child.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <a
+            href={item.href}
+            class:list={[
+              'text-sm tracking-wide transition-colors hover:text-gold',
+              isActive(item.href) ? 'text-gold' : 'text-cream/90',
+            ]}
+          >
+            {item.label}
+          </a>
+        ),
+      )}
     </nav>
 
     <button
@@ -48,15 +83,32 @@ function isActive(href: string) {
 
   <nav id="mobile-menu" class="lg:hidden hidden flex-col border-t border-cream/10 px-6 py-4 gap-1">
     {NAV_ITEMS.map((item) => (
-      <a
-        href={item.href}
-        class:list={[
-          'block py-2.5 text-sm tracking-wide',
-          isActive(item.href) ? 'text-gold' : 'text-cream/90',
-        ]}
-      >
-        {item.label}
-      </a>
+      <>
+        <a
+          href={item.href}
+          class:list={[
+            'block py-2.5 text-sm tracking-wide',
+            isActiveGroup(item) ? 'text-gold' : 'text-cream/90',
+          ]}
+        >
+          {item.label}
+        </a>
+        {item.children && (
+          <div class="pl-4 border-l border-cream/10 ml-1 mb-1">
+            {item.children.map((child) => (
+              <a
+                href={child.href}
+                class:list={[
+                  'block py-2 text-sm tracking-wide',
+                  isActive(child.href) ? 'text-gold' : 'text-cream/70',
+                ]}
+              >
+                {child.label}
+              </a>
+            ))}
+          </div>
+        )}
+      </>
     ))}
   </nav>
 </header>
