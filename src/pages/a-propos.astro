@@ -1,25 +1,80 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Flourish from '../components/Flourish.astro';
 import { PortableText } from 'astro-portabletext';
+import { urlFor } from '../lib/sanity/image';
 import { sanityClient } from 'sanity:client';
 import { ABOUT_PAGE_QUERY } from '../lib/sanity/queries';
 
 const page = await sanityClient.fetch(ABOUT_PAGE_QUERY);
+const sections = page?.sections || [];
+const [intro, ...rest] = sections;
+const lastSectionIsAlt = rest.length > 0 ? (rest.length - 1) % 2 === 0 : false;
 ---
 
-<Layout title="À propos" description="À propos de l'élevage De Saint Prixe.">
-  <section class="px-6 lg:px-10 py-16 md:py-20">
-    <div class="max-w-3xl mx-auto space-y-14">
-      {page?.sections?.map((s: any, i: number) => (
-        <div class:list={[i === 0 && 'text-center']}>
-          {s.heading && (
-            <h1 class="font-display font-bold text-2xl md:text-3xl mb-4 uppercase">{s.heading}</h1>
-          )}
-          <div class="prose-body text-muted leading-relaxed">
-            <PortableText value={s.body} />
+<Layout
+  title="À propos"
+  description="À propos de l'élevage De Saint Prixe."
+  image={page?.heroImage ? urlFor(page.heroImage)?.width(1200).height(630).url() : undefined}
+  footerBg={lastSectionIsAlt ? 'cream' : 'ink'}
+>
+  {intro && (
+    <section class="bg-cream px-6 lg:px-10 py-20 md:py-28 text-center">
+      <div class="max-w-2xl mx-auto">
+        {intro.heading && (
+          <h1 class="font-display font-bold text-3xl md:text-4xl lg:text-5xl uppercase leading-tight mb-4">
+            {intro.heading}
+          </h1>
+        )}
+        <Flourish class="mx-auto mb-8" />
+        {intro.image && (
+          <div class="mb-10 aspect-[16/9] overflow-hidden bg-placeholder">
+            <img
+              src={urlFor(intro.image)?.width(1200).height(675).url()}
+              alt=""
+              class="w-full h-full object-cover"
+            />
+          </div>
+        )}
+        <div class="prose-body text-lg leading-relaxed text-muted">
+          <PortableText value={intro.body} />
+        </div>
+      </div>
+    </section>
+  )}
+
+  {rest.map((s: any, i: number) => {
+    const isAlt = i % 2 === 0;
+    const flip = i % 2 === 1;
+    const bgClass = isAlt ? 'bg-ink text-cream' : 'bg-cream text-ink';
+    const mutedClass = isAlt ? 'text-cream/80' : 'text-muted';
+    return (
+      <section class:list={[bgClass, 'px-6 lg:px-10 py-16 md:py-20']}>
+        <div class:list={['max-w-4xl mx-auto flex flex-col lg:gap-16 gap-8 items-center', flip ? 'lg:flex-row-reverse' : 'lg:flex-row']}>
+          <div class="lg:w-64 lg:shrink-0 lg:sticky lg:top-24 text-center">
+            {s.image && (
+              <div class="w-32 h-32 md:w-36 md:h-36 mx-auto mb-5 rounded-full overflow-hidden border-[4px] border-white shadow-[0_8px_20px_rgba(0,0,0,0.18)] bg-placeholder">
+                <img
+                  src={urlFor(s.image)?.width(300).height(300).url()}
+                  alt=""
+                  class="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            {s.heading && (
+              <h2 class="font-display font-bold text-2xl md:text-3xl uppercase leading-tight mb-3">
+                {s.heading}
+              </h2>
+            )}
+            <Flourish class="mx-auto" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class:list={['prose-body prose-body--dropcap text-[17px] leading-relaxed text-center lg:text-left', mutedClass]}>
+              <PortableText value={s.body} />
+            </div>
           </div>
         </div>
-      ))}
-    </div>
-  </section>
+      </section>
+    );
+  })}
 </Layout>

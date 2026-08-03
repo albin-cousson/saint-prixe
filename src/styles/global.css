@@ -14,7 +14,9 @@
      fills, borders, and text-on-dark; use gold-text only for text on light backgrounds. */
   --color-gold-text: #8a5a2b;
   --color-muted: #6b6a68;
-  --color-muted-2: #9b9a96;
+  /* Was #9b9a96 (2.8:1 on white, fails WCAG AA at the 12-14px sizes it's used at
+     for dates/meta text) — darkened to clear 4.5:1 on both white and cream. */
+  --color-muted-2: #6f6d69;
   --color-placeholder: #efe8db;
 
   --font-display: "Libre Baskerville", Georgia, serif;
@@ -64,5 +66,15 @@
   .prose-body h3 {
     font-size: 1.15rem;
     margin: 1.5em 0 0.5em;
+  }
+
+  .prose-body--dropcap p:first-of-type::first-letter {
+    font-family: var(--font-display);
+    font-weight: 700;
+    float: left;
+    font-size: 3.4em;
+    line-height: 0.85;
+    padding-right: 0.08em;
+    color: var(--color-gold-deep);
   }
 }
