@@ -7,10 +7,10 @@ import { MARIAGES_WITH_CHIOTS_QUERY } from '../../lib/sanity/queries';
 const mariages = await sanityClient.fetch(MARIAGES_WITH_CHIOTS_QUERY);
 ---
 
-<Layout title="Nos Chiots" description="Découvrez nos couples et les chiots disponibles à l'élevage De Saint Prixe.">
+<Layout title="Nos Portées" description="Découvrez nos couples et les chiots disponibles à l'élevage De Saint Prixe.">
   <section class="bg-cream px-6 lg:px-10 py-16 md:py-20">
     <div class="max-w-7xl mx-auto">
-      <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-3">Nos Chiots</h1>
+      <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-3">Nos Portées</h1>
       <p class="text-center text-muted max-w-2xl mx-auto mb-14">
         Découvrez nos couples et les chiots disponibles, portée par portée.
       </p>
@@ -20,7 +20,14 @@ const mariages = await sanityClient.fetch(MARIAGES_WITH_CHIOTS_QUERY);
           Aucun mariage à afficher pour le moment. Revenez bientôt.
         </p>
       ) : (
-        <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          class:list={[
+            'grid gap-10',
+            mariages.length === 1 && 'grid-cols-1 max-w-md mx-auto',
+            mariages.length === 2 && 'grid-cols-1 sm:grid-cols-2',
+            mariages.length >= 3 && 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+          ]}
+        >
           {mariages.map((m: any) => (
             <MariageCard
               slug={m.slug?.current}

@@ -6,10 +6,12 @@ interface Props {
   gender?: string;
   color?: string;
   status?: string;
+  description?: string;
+  lofNumber?: string;
   images: string[]; // pre-resolved Sanity CDN URLs
 }
 
-export default function PuppyCarousel({ title, gender, color, status, images }: Props) {
+export default function PuppyCarousel({ title, gender, color, status, description, lofNumber, images }: Props) {
   const [index, setIndex] = useState(0);
   const ok = isAvailable(status);
   const safeImages = images.length ? images : [''];
@@ -74,6 +76,16 @@ export default function PuppyCarousel({ title, gender, color, status, images }: 
         </div>
       </div>
       {meta && <p className="text-xs text-muted-2 mt-2.5">{meta}</p>}
+      {description && <p className="text-xs text-muted mt-1.5 leading-relaxed">{description}</p>}
+      {lofNumber && <p className="text-[11px] text-muted-2 mt-1">LOF {lofNumber}</p>}
+      {ok && (
+        <a
+          href={`/contact?sujet=${encodeURIComponent(`ce chiot : ${title}`)}`}
+          className="inline-block bg-gold hover:brightness-95 text-ink font-semibold text-xs px-4 py-2 mt-3 transition"
+        >
+          Réserver ce chiot ›
+        </a>
+      )}
     </div>
   );
 }

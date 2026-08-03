@@ -1,0 +1,42 @@
+---
+import { urlFor } from '../../lib/sanity/image';
+
+interface Props {
+  groomPhoto?: any;
+  bridePhoto?: any;
+  size?: 'card' | 'hero';
+}
+const { groomPhoto, bridePhoto, size = 'card' } = Astro.props;
+
+const isHero = size === 'hero';
+const photoClass = isHero ? 'w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36' : 'w-20 h-20 md:w-24 md:h-24';
+const borderClass = isHero ? 'border-[4px]' : 'border-[3px]';
+const ampersandClass = isHero ? 'text-2xl sm:text-3xl' : 'text-xl';
+const imgSize = isHero ? 400 : 260;
+---
+
+<div class="flex items-center justify-center gap-4 md:gap-6">
+  <div
+    class:list={[
+      photoClass,
+      borderClass,
+      'shrink-0 rounded-full overflow-hidden border-white bg-placeholder shadow-[0_6px_16px_rgba(0,0,0,0.16)]',
+    ]}
+  >
+    {groomPhoto && (
+      <img src={urlFor(groomPhoto)?.width(imgSize).height(imgSize).url()} alt="" class="w-full h-full object-cover" loading="lazy" />
+    )}
+  </div>
+  <span class:list={['shrink-0 font-display italic text-gold-text', ampersandClass]} aria-hidden="true">&amp;</span>
+  <div
+    class:list={[
+      photoClass,
+      borderClass,
+      'shrink-0 rounded-full overflow-hidden border-white bg-placeholder shadow-[0_6px_16px_rgba(0,0,0,0.16)]',
+    ]}
+  >
+    {bridePhoto && (
+      <img src={urlFor(bridePhoto)?.width(imgSize).height(imgSize).url()} alt="" class="w-full h-full object-cover" loading="lazy" />
+    )}
+  </div>
+</div>

@@ -1,7 +1,8 @@
 ---
 import Flourish from '../Flourish.astro';
+import CoupleMedallion from './CoupleMedallion.astro';
 import { urlFor } from '../../lib/sanity/image';
-import { isAvailable } from '../../lib/status';
+import { isAvailable, formatDateFr } from '../../lib/status';
 
 interface Puppy {
   title: string;
@@ -24,30 +25,11 @@ const { slug, dogGroomName, dogGroomPhoto, dogBrideName, dogBridePhoto, descript
 
 const available = puppies.filter((p) => isAvailable(p.status)).length;
 const unavailable = puppies.length - available;
-
-function formatDateFr(value?: string) {
-  if (!value) return null;
-  const d = new Date(value);
-  if (isNaN(d.getTime())) return value;
-  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-}
 ---
 
-<a href={`/nos-chiots/${slug}`} class="group block bg-white border border-border p-9 pb-7 text-center transition-shadow hover:shadow-[0_12px_24px_rgba(59,59,59,0.1)]">
-  <div class="flex items-center justify-center gap-3.5 mb-4.5">
-    <div class="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-[3px] border-white shadow-[0_4px_16px_rgba(0,0,0,0.16)] bg-placeholder shrink-0">
-      {dogGroomPhoto && (
-        <img src={urlFor(dogGroomPhoto)?.width(260).height(260).url()} alt="" class="w-full h-full object-cover" loading="lazy" />
-      )}
-    </div>
-    <div class="w-9 h-9 rounded-full bg-gold text-white flex items-center justify-center font-display text-base shrink-0" aria-hidden="true">
-      &amp;
-    </div>
-    <div class="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-[3px] border-white shadow-[0_4px_16px_rgba(0,0,0,0.16)] bg-placeholder shrink-0">
-      {dogBridePhoto && (
-        <img src={urlFor(dogBridePhoto)?.width(260).height(260).url()} alt="" class="w-full h-full object-cover" loading="lazy" />
-      )}
-    </div>
+<a href={`/nos-portees/${slug}`} class="group block bg-white border border-border p-9 pb-7 text-center text-ink transition-shadow hover:shadow-[0_12px_24px_rgba(59,59,59,0.1)]">
+  <div class="mb-6">
+    <CoupleMedallion groomPhoto={dogGroomPhoto} bridePhoto={dogBridePhoto} size="card" />
   </div>
 
   <h3 class="font-display font-bold text-xl md:text-2xl leading-tight mb-1.5">
@@ -77,7 +59,7 @@ function formatDateFr(value?: string) {
                 />
               )}
               {!ok && (
-                <span class="absolute inset-x-0 bottom-0 bg-black/60 text-white text-[8px] font-bold uppercase tracking-wide text-center py-[3px] px-0.5">
+                <span class="absolute inset-x-0 bottom-0 bg-black/70 text-white text-[10px] font-bold uppercase tracking-wide text-center py-1 px-0.5">
                   {p.status || 'Plus dispo'}
                 </span>
               )}
@@ -92,7 +74,7 @@ function formatDateFr(value?: string) {
     </>
   )}
 
-  <span class="block w-full bg-gold group-hover:bg-gold-deep text-white font-semibold text-sm py-3 px-5 transition-colors">
+  <span class="block w-full bg-gold group-hover:brightness-95 text-ink font-semibold text-sm py-3 px-5 transition">
     Découvrir la portée ›
   </span>
 </a>

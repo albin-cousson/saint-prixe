@@ -13,10 +13,9 @@ export const NAV_ITEMS: NavItem[] = [
     children: [
       { label: 'Nos Mâles', href: '/nos-males' },
       { label: 'Nos Femelles', href: '/nos-femelles' },
-      { label: 'Nos Shih tzu', href: '/nos-shih-tzu' },
     ],
   },
-  { label: 'Nos Chiots', href: '/nos-chiots' },
+  { label: 'Nos Portées', href: '/nos-portees' },
   { label: 'Portfolio', href: '/portfolio' },
   { label: 'Contact', href: '/contact' },
 ];
