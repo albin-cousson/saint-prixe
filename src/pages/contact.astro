@@ -1,51 +1,100 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Flourish from '../components/Flourish.astro';
+import { sanityClient } from 'sanity:client';
+import { SITE_SETTINGS_QUERY } from '../lib/sanity/queries';
 
-const email = 'aurelie.cousson68@gmail.com';
-const phone = '06 70 91 05 26';
-const phoneHref = '0670910526';
-const addressLines = ["24 rue d'Issenheim", '68190 Raedersheim, France'];
+const settings = await sanityClient.fetch(SITE_SETTINGS_QUERY);
+const email = settings?.email || 'aurelie.cousson68@gmail.com';
+const phone = settings?.phone || '06 70 91 05 26';
+const phoneHref = phone.replace(/\s+/g, '');
+const addressLines = (settings?.address || "24 rue d'Issenheim\n68190 Raedersheim, France").split('\n');
+const sujet = Astro.url.searchParams.get('sujet') || '';
+const prefill = sujet ? `Bonjour,\n\nJe vous contacte au sujet de ${sujet}.\n\n` : '';
+const mapQuery = encodeURIComponent(addressLines.join(', '));
+const mapEmbedSrc = `https://www.google.com/maps?q=${mapQuery}&output=embed`;
 ---
 
-<Layout title="Contact" description="Contactez l'élevage De Saint Prixe.">
-  <section class="px-6 lg:px-10 py-16 md:py-20">
-    <div class="max-w-4xl mx-auto">
-      <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-14">Contact</h1>
+<Layout title="Contact" description="Contactez l'élevage De Saint Prixe." footerBg="ink">
+  <section class="bg-cream px-6 lg:px-10 py-16 md:py-20">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14">
+        <h1 class="font-display font-bold text-3xl md:text-4xl mb-3">Contact</h1>
+        <Flourish width={90} height={12} class="mx-auto mb-4" />
+        <p class="text-sm text-muted max-w-md mx-auto">
+          Une question sur nos chiens ou une prochaine portée ? Nous répondons avec plaisir, par e-mail ou par
+          téléphone.
+        </p>
+      </div>
 
-      <div class="grid md:grid-cols-2 gap-12">
-        <div>
+      <div class="grid lg:grid-cols-5 gap-8 items-stretch">
+        <div class="lg:col-span-3 bg-white border border-border p-8 md:p-10">
           <h2 class="font-display font-bold text-xl mb-5">Nous écrire</h2>
-          <form id="contact-form" class="space-y-4">
+          <form id="contact-form" class="space-y-4" novalidate>
             <div>
               <label for="name" class="block text-sm font-medium mb-1">Nom</label>
-              <input id="name" name="name" type="text" required class="w-full border border-border px-4 py-2.5 text-sm focus:outline-none focus:border-gold-deep" />
+              <input id="name" name="name" type="text" required autocomplete="name" class="w-full border border-border px-4 py-2.5 text-sm focus:outline-none focus:border-gold-deep" />
+              <p class="mt-1 text-xs text-red-700 hidden" data-error-for="name">Merci d'indiquer votre nom.</p>
             </div>
             <div>
               <label for="email" class="block text-sm font-medium mb-1">E-mail</label>
-              <input id="email" name="email" type="email" required class="w-full border border-border px-4 py-2.5 text-sm focus:outline-none focus:border-gold-deep" />
+              <input id="email" name="email" type="email" required autocomplete="email" class="w-full border border-border px-4 py-2.5 text-sm focus:outline-none focus:border-gold-deep" />
+              <p class="mt-1 text-xs text-red-700 hidden" data-error-for="email">Merci d'indiquer une adresse e-mail valide.</p>
             </div>
             <div>
               <label for="message" class="block text-sm font-medium mb-1">Message</label>
-              <textarea id="message" name="message" rows="5" required class="w-full border border-border px-4 py-2.5 text-sm focus:outline-none focus:border-gold-deep"></textarea>
+              <textarea id="message" name="message" rows="6" required class="w-full border border-border px-4 py-2.5 text-sm focus:outline-none focus:border-gold-deep">{prefill}</textarea>
+              <p class="mt-1 text-xs text-red-700 hidden" data-error-for="message">Merci d'ajouter un message.</p>
             </div>
-            <button type="submit" class="bg-gold hover:bg-gold-deep text-white font-semibold px-6 py-3 text-sm transition-colors">
+            <button type="submit" class="bg-gold hover:brightness-95 text-ink font-semibold px-6 py-3 text-sm transition">
               Envoyer
             </button>
+            <p id="contact-fallback" class="hidden text-xs text-muted-2 mt-2">
+              Votre messagerie ne s'est pas ouverte ? Écrivez-nous directement à
+              <a href={`mailto:${email}`} class="underline hover:text-gold-text">{email}</a>.
+            </p>
           </form>
         </div>
 
-        <div>
-          <h2 class="font-display font-bold text-xl mb-5">Coordonnées</h2>
-          <div class="space-y-3 text-sm text-muted">
-            <a href={`tel:${phoneHref}`} class="block hover:text-gold-text transition-colors">{phone}</a>
-            <a href={`mailto:${email}`} class="block hover:text-gold-text transition-colors">{email}</a>
-            <p>
-              {addressLines.map((line) => (
-                <>
-                  {line}<br />
-                </>
-              ))}
-            </p>
+        <div class="lg:col-span-2 flex flex-col gap-6">
+          <div class="bg-white border border-border p-8">
+            <h2 class="font-display font-bold text-xl mb-5">Coordonnées</h2>
+            <div class="space-y-4 text-sm text-muted">
+              <a href={`tel:${phoneHref}`} class="flex items-center gap-3 hover:text-gold-text transition-colors">
+                <span class="w-8 h-8 shrink-0 rounded-full bg-gold/15 text-gold-deep flex items-center justify-center">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </span>
+                {phone}
+              </a>
+              <a href={`mailto:${email}`} class="flex items-center gap-3 hover:text-gold-text transition-colors">
+                <span class="w-8 h-8 shrink-0 rounded-full bg-gold/15 text-gold-deep flex items-center justify-center">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                </span>
+                {email}
+              </a>
+              <div class="flex items-start gap-3">
+                <span class="w-8 h-8 shrink-0 rounded-full bg-gold/15 text-gold-deep flex items-center justify-center">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s7-7.58 7-12a7 7 0 1 0-14 0c0 4.42 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                </span>
+                <p>
+                  {addressLines.map((line) => (
+                    <>
+                      {line}<br />
+                    </>
+                  ))}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white border border-border overflow-hidden flex-1 min-h-[220px]">
+            <iframe
+              src={mapEmbedSrc}
+              class="w-full h-full min-h-[220px] grayscale contrast-125 opacity-90 hover:grayscale-0 hover:opacity-100 transition duration-500"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Localisation de l'élevage De Saint Prixe"
+            ></iframe>
           </div>
         </div>
       </div>
@@ -55,11 +104,35 @@ const addressLines = ["24 rue d'Issenheim", '68190 Raedersheim, France'];
 
 <script define:vars={{ email }}>
   const form = document.getElementById('contact-form');
+  const fallback = document.getElementById('contact-fallback');
+
+  function showError(name, show) {
+    const field = form?.querySelector(`[name="${name}"]`);
+    const msg = form?.querySelector(`[data-error-for="${name}"]`);
+    field?.classList.toggle('border-red-700', show);
+    msg?.classList.toggle('hidden', !show);
+  }
+
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
     const data = new FormData(form);
-    const subject = encodeURIComponent(`Message de ${data.get('name')} — via le site`);
-    const body = encodeURIComponent(`${data.get('message')}\n\nRépondre à : ${data.get('email')}`);
+    const name = String(data.get('name') || '').trim();
+    const emailValue = String(data.get('email') || '').trim();
+    const message = String(data.get('message') || '').trim();
+
+    const nameValid = name.length > 0;
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
+    const messageValid = message.length > 0;
+
+    showError('name', !nameValid);
+    showError('email', !emailValid);
+    showError('message', !messageValid);
+
+    if (!nameValid || !emailValid || !messageValid) return;
+
+    const subject = encodeURIComponent(`Message de ${name} — via le site`);
+    const body = encodeURIComponent(`${message}\n\nRépondre à : ${emailValue}`);
     window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    fallback?.classList.remove('hidden');
   });
 </script>
