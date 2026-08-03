@@ -1,37 +1,43 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { urlFor } from '../../lib/sanity/image';
-import { formatDateFr } from '../../lib/status';
+import PostCard from '../../components/actualites/PostCard.astro';
 import { sanityClient } from 'sanity:client';
-import { BLOG_POSTS_QUERY } from '../../lib/sanity/queries';
+import { BLOG_POSTS_QUERY, DOG_SLUGS_QUERY } from '../../lib/sanity/queries';
 
-const posts = await sanityClient.fetch(BLOG_POSTS_QUERY);
+const allPosts = await sanityClient.fetch(BLOG_POSTS_QUERY);
+const dogSlugs = new Set(
+  (await sanityClient.fetch(DOG_SLUGS_QUERY)).map((s: { slug: string }) => s.slug),
+);
+// Some blog posts are a dog's own presentation (same slug as its /nos-chiens page) rather
+// than real kennel news — keep this listing to actual actualités only.
+const posts = allPosts.filter((p: any) => !dogSlugs.has(p.slug.current));
+
+const groups = new Map<string, any[]>();
+for (const p of posts) {
+  const year = p.publishedAt ? new Date(p.publishedAt).getFullYear().toString() : 'Sans date';
+  if (!groups.has(year)) groups.set(year, []);
+  groups.get(year)!.push(p);
+}
 ---
 
 <Layout title="Actualités" description="Les actualités de l'élevage De Saint Prixe : expositions, résultats, portées.">
-  <section class="px-6 lg:px-10 py-16 md:py-20">
+  <section class="bg-cream px-6 lg:px-10 py-16 md:py-20">
     <div class="max-w-7xl mx-auto">
-      <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-14">Actualités</h1>
-      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {posts.map((p: any) => (
-          <a href={`/actualites/${p.slug.current}`} class="group block bg-white border border-border overflow-hidden">
-            {p.coverImage && (
-              <div class="aspect-[4/3] overflow-hidden">
-                <img
-                  src={urlFor(p.coverImage)?.width(500).height(375).url()}
-                  alt=""
-                  loading="lazy"
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-            )}
-            <div class="p-5">
-              <h2 class="font-display font-bold text-base mb-1">{p.title}</h2>
-              {p.publishedAt && <p class="text-xs text-muted-2">{formatDateFr(p.publishedAt)}</p>}
-            </div>
-          </a>
-        ))}
-      </div>
+      <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-3">Actualités</h1>
+      <p class="text-center text-muted max-w-2xl mx-auto mb-14">
+        Retrouvez ici nos résultats et actualités en expositions, régulièrement mis à jour.
+      </p>
+
+      {[...groups.entries()].map(([year, yearPosts]) => (
+        <div class="mb-14">
+          <h2 class="font-display font-bold text-xl mb-6 pb-2 border-b border-border">{year}</h2>
+          <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {yearPosts.map((p: any) => (
+              <PostCard post={p} />
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   </section>
 </Layout>

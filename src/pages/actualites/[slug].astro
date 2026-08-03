@@ -1,5 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Flourish from '../../components/Flourish.astro';
+import Lightbox from '../../components/Lightbox.astro';
 import { PortableText } from 'astro-portabletext';
 import { urlFor } from '../../lib/sanity/image';
 import { formatDateFr } from '../../lib/status';
@@ -14,24 +16,51 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const post = await sanityClient.fetch(BLOG_POST_BY_SLUG_QUERY, { slug });
 if (!post) return Astro.redirect('/actualites');
+
+const coverUrl = post.coverImage ? urlFor(post.coverImage)?.width(1000).height(750).url() : undefined;
 ---
 
-<Layout title={post.title} description={post.excerpt}>
-  <article class="px-6 lg:px-10 py-16 md:py-20">
-    <div class="max-w-2xl mx-auto">
-      <a href="/actualites" class="text-sm text-muted-2 hover:text-gold-text transition-colors">‹ Toutes les actualités</a>
-      <h1 class="font-display font-bold text-3xl md:text-4xl mt-4 mb-2">{post.title}</h1>
-      {post.publishedAt && <p class="text-sm text-muted-2 mb-8">{formatDateFr(post.publishedAt)}</p>}
-      {post.coverImage && (
-        <img
-          src={urlFor(post.coverImage)?.width(1000).url()}
-          alt=""
-          class="w-full mb-10"
-        />
+<Layout title={post.title} description={post.excerpt} image={coverUrl} footerBg="ink">
+  <article class="bg-cream min-h-screen px-6 lg:px-10 py-16 md:py-20">
+    <div class="max-w-2xl mx-auto bg-white border border-border shadow-[0_16px_40px_rgba(0,0,0,0.12)] overflow-hidden">
+      {coverUrl && (
+        <div class="aspect-[4/3] overflow-hidden bg-placeholder">
+          <img src={coverUrl} alt="" class="w-full h-full object-cover" />
+        </div>
       )}
-      <div class="prose-body text-[15px] leading-relaxed text-muted">
-        <PortableText value={post.body} />
+
+      <div class="p-8 md:p-12">
+        <a href="/actualites" class="inline-block mb-6 text-sm text-muted-2 hover:text-gold-text transition-colors">
+          ‹ Toutes les actualités
+        </a>
+
+        {post.publishedAt && (
+          <p class="text-xs font-semibold uppercase tracking-[0.15em] text-gold-text mb-3">
+            {formatDateFr(post.publishedAt)}
+          </p>
+        )}
+
+        <h1 class="font-display font-bold text-3xl md:text-4xl mb-4">{post.title}</h1>
+        <Flourish width={90} height={12} class="mb-8" />
+
+        <div class="prose-body prose-body--dropcap text-[15px] leading-relaxed text-muted">
+          <PortableText value={post.body} />
+        </div>
+
+        {post.gallery && post.gallery.length > 0 && (
+          <div class="mt-10">
+            <h2 class="font-display font-bold text-lg mb-4">Galerie</h2>
+            <div class="columns-2 sm:columns-3 gap-3 space-y-3">
+              {post.gallery.map((img: any) => (
+                <a href={urlFor(img)?.width(1600).url()} data-lightbox={urlFor(img)?.width(1600).url()} class="block bg-placeholder">
+                  <img src={urlFor(img)?.width(600).url()} alt="" loading="lazy" class="w-full block" />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   </article>
+  <Lightbox />
 </Layout>

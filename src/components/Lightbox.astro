@@ -1,0 +1,60 @@
+---
+---
+
+<div
+  id="lightbox"
+  class="fixed inset-0 z-[100] flex items-center justify-center bg-ink/95 p-4 md:p-10 opacity-0 pointer-events-none transition-opacity duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Photo en grand"
+>
+  <button
+    type="button"
+    id="lightbox-close"
+    aria-label="Fermer"
+    class="absolute top-4 right-4 md:top-6 md:right-6 w-10 h-10 flex items-center justify-center text-cream/80 hover:text-cream transition-colors"
+  >
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" />
+    </svg>
+  </button>
+  <img id="lightbox-img" src="" alt="" class="max-w-full max-h-full object-contain" />
+</div>
+
+<script>
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
+  const closeBtn = document.getElementById('lightbox-close');
+
+  function openLightbox(src: string, alt: string) {
+    if (!lightbox || !lightboxImg) return;
+    lightboxImg.src = src;
+    lightboxImg.alt = alt;
+    lightbox.classList.remove('opacity-0', 'pointer-events-none');
+    document.documentElement.classList.add('overflow-hidden');
+  }
+
+  function closeLightbox() {
+    if (!lightbox || !lightboxImg) return;
+    lightbox.classList.add('opacity-0', 'pointer-events-none');
+    document.documentElement.classList.remove('overflow-hidden');
+    lightboxImg.src = '';
+  }
+
+  document.querySelectorAll('[data-lightbox]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      const src = el.getAttribute('data-lightbox') || '';
+      const alt = el.getAttribute('data-lightbox-alt') || '';
+      openLightbox(src, alt);
+    });
+  });
+
+  closeBtn?.addEventListener('click', closeLightbox);
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+</script>
