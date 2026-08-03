@@ -4,6 +4,10 @@ import dog from './dog'
 import blogPost from './blogPost'
 import siteSettings from './siteSettings'
 import pageSection from './pageSection'
+import mariagesSection from './mariagesSection'
+import actualitesSection from './actualitesSection'
+import malesSection from './malesSection'
+import femellesSection from './femellesSection'
 import homePage from './homePage'
 import aboutPage from './aboutPage'
 import contactPage from './contactPage'
@@ -27,4 +31,8 @@ export const schemaTypes = [
   blogPost,
   // Reusable objects
   pageSection,
+  mariagesSection,
+  actualitesSection,
+  malesSection,
+  femellesSection,
 ]

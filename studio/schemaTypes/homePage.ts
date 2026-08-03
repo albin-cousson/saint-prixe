@@ -12,9 +12,17 @@ export default defineType({
     defineField({name: 'heroButtonHref', title: 'Lien du bouton', type: 'string'}),
     defineField({
       name: 'sections',
-      title: 'Sections additionnelles',
+      title: 'Sections de la page',
+      description:
+        'Sections additionnelles (texte libre) et sections liées à une page (contenus dynamiques : actualités, portées, mâles, femelles). L\'ordre ici détermine l\'ordre d\'affichage sur la page.',
       type: 'array',
-      of: [{type: 'pageSection'}],
+      of: [
+        {type: 'pageSection', title: 'Section additionnelle'},
+        {type: 'actualitesSection', title: 'Actualités'},
+        {type: 'mariagesSection', title: 'Nos portées'},
+        {type: 'malesSection', title: 'Nos mâles'},
+        {type: 'femellesSection', title: 'Nos femelles'},
+      ],
     }),
   ],
   preview: {

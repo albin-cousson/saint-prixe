@@ -14,6 +14,8 @@ export default defineType({
       of: [{type: 'block'}],
     }),
     defineField({name: 'image', title: 'Image', type: 'image', options: {hotspot: true}}),
+    defineField({name: 'ctaLabel', title: 'Texte du bouton "en savoir plus"', type: 'string'}),
+    defineField({name: 'ctaHref', title: 'Lien du bouton "en savoir plus"', type: 'string'}),
   ],
   preview: {
     select: {title: 'heading', media: 'image'},

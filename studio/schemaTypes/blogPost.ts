@@ -15,6 +15,12 @@ export default defineType({
     }),
     defineField({name: 'publishedAt', title: 'Date de publication', type: 'date'}),
     defineField({name: 'coverImage', title: 'Image de couverture', type: 'image', options: {hotspot: true}}),
+    defineField({
+      name: 'gallery',
+      title: 'Galerie (photos secondaires)',
+      type: 'array',
+      of: [{type: 'image', options: {hotspot: true}}],
+    }),
     defineField({name: 'excerpt', title: 'Résumé (liste des articles)', type: 'text'}),
     defineField({
       name: 'body',
