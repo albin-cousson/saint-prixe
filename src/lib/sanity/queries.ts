@@ -5,7 +5,15 @@ export const SITE_SETTINGS_QUERY = defineQuery(`*[_type == "siteSettings"][0]`);
 export const HOME_PAGE_QUERY = defineQuery(`*[_type == "homePage"][0]`);
 export const ABOUT_PAGE_QUERY = defineQuery(`*[_type == "aboutPage"][0]`);
 export const CONTACT_PAGE_QUERY = defineQuery(`*[_type == "contactPage"][0]`);
-export const PORTFOLIO_PAGE_QUERY = defineQuery(`*[_type == "portfolioPage"][0]`);
+export const PORTFOLIO_PAGE_QUERY = defineQuery(`
+  *[_type == "portfolioPage"][0] {
+    ...,
+    "images": images[]{
+      ...,
+      "width": asset->metadata.dimensions.width
+    }
+  }
+`);
 export const INQUIRY_PAGE_QUERY = defineQuery(`*[_type == "inquiryPage"][0]`);
 export const ACTUALITES_PAGE_QUERY = defineQuery(`*[_type == "actualitesPage"][0]`);
 
