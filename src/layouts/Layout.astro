@@ -6,8 +6,15 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  image?: string;
+  footerBg?: 'cream' | 'ink';
 }
-const { title, description = 'Élevage De Saint Prixe — Bearded Collie et Shih Tzu, en Alsace.' } = Astro.props;
+const {
+  title,
+  description = 'Élevage De Saint Prixe — Bearded Collie et Shih Tzu, en Alsace.',
+  image,
+  footerBg = 'ink',
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -21,12 +28,14 @@ const { title, description = 'Élevage De Saint Prixe — Bearded Collie et Shih
     <meta property="og:title" content={`${title} | De Saint Prixe`} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    {image && <meta property="og:image" content={image} />}
+    <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
   </head>
   <body>
     <Header />
     <main>
       <slot />
     </main>
-    <Footer />
+    <Footer bg={footerBg} />
   </body>
 </html>

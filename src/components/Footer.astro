@@ -1,25 +1,53 @@
 ---
-const email = 'aurelie.cousson68@gmail.com';
-const phone = '06 70 91 05 26';
-const phoneHref = '0670910526';
-const addressLines = ["24 rue d'Issenheim", '68190 Raedersheim, France'];
-const social = [
-  { platform: 'Facebook', href: 'https://www.facebook.com/cousson.aurelie' },
-  { platform: 'Instagram', href: 'https://www.instagram.com/aurelie_cousson/' },
-];
-const year = new Date().getFullYear();
+import Flourish from './Flourish.astro';
+import { sanityClient } from 'sanity:client';
+import { SITE_SETTINGS_QUERY } from '../lib/sanity/queries';
+
+const settings = await sanityClient.fetch(SITE_SETTINGS_QUERY);
+
+const email = settings?.email || 'aurelie.cousson68@gmail.com';
+const phone = settings?.phone || '06 70 91 05 26';
+const phoneHref = phone.replace(/\s+/g, '');
+const addressLines: string[] = settings?.address
+  ? settings.address.split('\n')
+  : ["24 rue d'Issenheim", '68190 Raedersheim, France'];
+const social =
+  settings?.socialLinks?.length > 0
+    ? settings.socialLinks.map((s: { platform: string; url: string }) => ({ platform: s.platform, href: s.url }))
+    : [
+        { platform: 'Facebook', href: 'https://www.facebook.com/cousson.aurelie' },
+        { platform: 'Instagram', href: 'https://www.instagram.com/aurelie_cousson/' },
+      ];
+const siteName = settings?.siteName || 'De Saint Prixe';
+const tagline = settings?.tagline || 'Élevage de Bearded Collie';
+const [siteNameFirstWord, ...siteNameRestWords] = siteName.split(' ');
+const siteNameRest = siteNameRestWords.join(' ');
+
+interface Props {
+  bg?: 'cream' | 'ink';
+}
+const { bg = 'ink' } = Astro.props;
+const isCream = bg === 'cream';
+
+const bgClass = isCream ? 'bg-cream text-ink' : 'bg-ink text-cream';
+const mutedClass = isCream ? 'text-muted' : 'text-cream/80';
+const linkHoverClass = isCream ? 'hover:text-gold-deep' : 'hover:text-gold';
+const fadeGradientClass = isCream
+  ? 'bg-gradient-to-b from-ink/15 via-ink/6 to-transparent'
+  : 'bg-gradient-to-b from-cream/20 via-cream/8 to-transparent';
 ---
 
-<footer class="bg-ink text-cream mt-24">
-  <div class="mx-auto max-w-7xl px-6 lg:px-10 py-16 grid gap-12 md:grid-cols-3">
-    <div>
-      <p class="font-display font-bold text-lg">DE SAINT PRIXE</p>
-      <p class="text-xs tracking-[0.2em] text-gold mt-1">ÉLEVAGE DE BEARDED COLLIE</p>
-    </div>
+<footer class:list={['relative overflow-hidden', bgClass]}>
+  <div class="relative z-10 mx-auto max-w-2xl px-6 lg:px-10 pt-16 pb-40 md:pb-50 text-center">
+    <p class="font-display font-bold text-2xl md:text-3xl uppercase tracking-wide">
+      <span class="text-base md:text-lg">{siteNameFirstWord}</span> {siteNameRest}
+    </p>
+    <p class="text-xs tracking-[0.2em] text-gold mt-1.5 uppercase">{tagline}</p>
+    <Flourish width={90} height={12} class="mx-auto mt-1.5 mb-8" />
 
-    <div class="text-sm text-cream/80 space-y-2">
-      <a href={`tel:${phoneHref}`} class="block hover:text-gold transition-colors">{phone}</a>
-      <a href={`mailto:${email}`} class="block hover:text-gold transition-colors">{email}</a>
+    <div class:list={['text-sm space-y-1.5', mutedClass]}>
+      <a href={`tel:${phoneHref}`} class:list={['block transition-colors', linkHoverClass]}>{phone}</a>
+      <a href={`mailto:${email}`} class:list={['block transition-colors', linkHoverClass]}>{email}</a>
       <p>
         {addressLines.map((line) => (
           <>
@@ -29,14 +57,14 @@ const year = new Date().getFullYear();
       </p>
     </div>
 
-    <div class="flex gap-4 md:justify-end items-start">
+    <div class="flex gap-4 justify-center mt-6">
       {social.map((s) => (
         <a
           href={s.href}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={s.platform}
-          class="text-cream/80 hover:text-gold transition-colors"
+          class:list={['transition-colors', mutedClass, linkHoverClass]}
         >
           {s.platform === 'Facebook' ? (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>
@@ -48,7 +76,14 @@ const year = new Date().getFullYear();
     </div>
   </div>
 
-  <div class="border-t border-cream/10 py-5 text-center text-xs text-cream/60">
-    © {year} par Elevage de Saint Prixe. Lancé et sécurisé par Albin Cousson.
+  <div
+    class:list={[
+      'absolute inset-x-0 bottom-4 md:bottom-6 px-4 leading-none uppercase font-display font-bold tracking-wide text-center pointer-events-none select-none md:whitespace-nowrap bg-clip-text text-transparent',
+      fadeGradientClass,
+    ]}
+    style={`font-size: clamp(2.5rem, 11vw, 7rem);`}
+    aria-hidden="true"
+  >
+    {siteName}
   </div>
 </footer>

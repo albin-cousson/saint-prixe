@@ -1,5 +1,14 @@
 ---
 import { NAV_ITEMS } from '../lib/nav';
+import Flourish from './Flourish.astro';
+import { sanityClient } from 'sanity:client';
+import { SITE_SETTINGS_QUERY } from '../lib/sanity/queries';
+
+const settings = await sanityClient.fetch(SITE_SETTINGS_QUERY);
+const siteName = settings?.siteName || 'De Saint Prixe';
+const tagline = settings?.tagline || 'Élevage de Bearded Collie';
+const [siteNameFirstWord, ...siteNameRestWords] = siteName.split(' ');
+const siteNameRest = siteNameRestWords.join(' ');
 
 const currentPath = Astro.url.pathname;
 function isActive(href: string) {
@@ -10,41 +19,46 @@ function isActiveGroup(item: (typeof NAV_ITEMS)[number]) {
 }
 ---
 
-<header class="bg-ink text-cream sticky top-0 z-50">
+<header id="site-header" class="bg-ink text-cream sticky top-0 z-[70] transition-transform duration-300 will-change-transform">
   <div class="mx-auto max-w-7xl px-6 lg:px-10 flex items-center justify-between py-4">
-    <a href="/" class="flex flex-col leading-none shrink-0">
-      <span class="font-display font-bold text-xl md:text-2xl tracking-wide">DE SAINT PRIXE</span>
-      <span class="text-[10px] md:text-xs tracking-[0.2em] text-gold mt-1">ÉLEVAGE DE BEARDED COLLIE</span>
-      <svg class="mt-1.5 text-gold" width="90" height="12" viewBox="0 0 120 16" fill="none" aria-hidden="true">
-        <path d="M0 8c20-6 30 6 46 0" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path>
-        <path d="M60 5.5c-1.6-4.6-8.4-4.6-9.4 0.4-0.9 4.4 9.4 8.6 9.4 8.6s10.3-4.2 9.4-8.6c-1-5-7.8-5-9.4-0.4z" fill="currentColor"></path>
-        <path d="M120 8c-20-6-30 6-46 0" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path>
-      </svg>
+    <a href="/" class="flex flex-col items-center text-center leading-none shrink-0">
+      <span class="font-display font-bold text-xl md:text-2xl tracking-wide uppercase">
+        <span class="text-xs md:text-sm">{siteNameFirstWord}</span> {siteNameRest}
+      </span>
+      <span class="text-[10px] md:text-xs tracking-[0.2em] text-gold mt-1 uppercase">{tagline}</span>
+      <Flourish width={90} height={12} class="mt-1.5" />
     </a>
 
-    <nav class="hidden lg:flex items-center gap-7">
+    <nav class="hidden lg:flex items-center gap-8">
       {NAV_ITEMS.map((item) =>
         item.children ? (
           <div class="relative group">
             <a
               href={item.href}
               class:list={[
-                'inline-flex items-center gap-1 text-sm tracking-wide transition-colors hover:text-gold',
-                isActiveGroup(item) ? 'text-gold' : 'text-cream/90',
+                "relative inline-flex items-center gap-1 pb-1 text-sm tracking-wide transition-colors hover:text-gold after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-px after:bg-gold after:transition-all after:duration-300",
+                isActiveGroup(item) ? 'text-gold after:w-full' : 'text-cream/90 after:w-0 hover:after:w-full',
               ]}
             >
               {item.label}
-              <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true" class="opacity-70">
+              <svg
+                width="10"
+                height="6"
+                viewBox="0 0 10 6"
+                fill="none"
+                aria-hidden="true"
+                class="opacity-70 transition-transform duration-300 group-hover:rotate-180"
+              >
                 <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
               </svg>
             </a>
-            <div class="absolute left-0 top-full pt-3 hidden group-hover:block group-focus-within:block">
-              <div class="bg-ink border border-cream/10 min-w-[170px] py-2 shadow-[0_12px_24px_rgba(0,0,0,0.25)]">
+            <div class="absolute left-0 top-full pt-3 invisible translate-y-1 opacity-0 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+              <div class="min-w-[170px] border border-t-2 border-cream/10 border-t-gold bg-ink py-2 shadow-[0_16px_32px_rgba(0,0,0,0.3)]">
                 {item.children.map((child) => (
                   <a
                     href={child.href}
                     class:list={[
-                      'block px-4 py-2 text-sm tracking-wide transition-colors hover:text-gold hover:bg-white/5',
+                      'block px-4 py-2 text-sm tracking-wide transition-colors hover:bg-white/5 hover:text-gold',
                       isActive(child.href) ? 'text-gold' : 'text-cream/90',
                     ]}
                   >
@@ -58,8 +72,8 @@ function isActiveGroup(item: (typeof NAV_ITEMS)[number]) {
           <a
             href={item.href}
             class:list={[
-              'text-sm tracking-wide transition-colors hover:text-gold',
-              isActive(item.href) ? 'text-gold' : 'text-cream/90',
+              "relative pb-1 text-sm tracking-wide transition-colors hover:text-gold after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-px after:bg-gold after:transition-all after:duration-300",
+              isActive(item.href) ? 'text-gold after:w-full' : 'text-cream/90 after:w-0 hover:after:w-full',
             ]}
           >
             {item.label}
@@ -70,37 +84,49 @@ function isActiveGroup(item: (typeof NAV_ITEMS)[number]) {
 
     <button
       id="menu-toggle"
-      class="lg:hidden text-cream p-2 -mr-2"
+      class="relative z-[70] -mr-1.5 flex h-9 w-9 shrink-0 flex-col items-center justify-center gap-[5px] lg:hidden"
       aria-label="Ouvrir le menu"
       aria-expanded="false"
       aria-controls="mobile-menu"
     >
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"></path>
-      </svg>
+      <span class="menu-bar block h-[1.5px] w-6 rounded-full bg-cream transition-all duration-300"></span>
+      <span class="menu-bar block h-[1.5px] w-6 rounded-full bg-cream transition-all duration-300"></span>
+      <span class="menu-bar block h-[1.5px] w-6 rounded-full bg-cream transition-all duration-300"></span>
     </button>
   </div>
+</header>
 
-  <nav id="mobile-menu" class="lg:hidden hidden flex-col border-t border-cream/10 px-6 py-4 gap-1">
-    {NAV_ITEMS.map((item) => (
-      <>
+<nav
+  id="mobile-menu"
+  aria-label="Menu mobile"
+  aria-hidden="true"
+  class="fixed inset-0 z-[60] flex flex-col bg-ink text-cream opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"
+>
+  <div class="flex flex-1 flex-col items-center justify-center gap-1 overflow-y-auto px-8 py-24">
+    <div class="mobile-nav-item mb-8 flex flex-col items-center" style="transition-delay: 0ms">
+      <span class="mb-2 font-display text-sm font-bold uppercase tracking-[0.3em] text-gold">{siteName}</span>
+      <Flourish width={70} height={10} />
+    </div>
+
+    {NAV_ITEMS.map((item, i) => (
+      <div class="mobile-nav-item flex flex-col items-center" style={`transition-delay: ${(i + 1) * 60}ms`}>
         <a
           href={item.href}
           class:list={[
-            'block py-2.5 text-sm tracking-wide',
-            isActiveGroup(item) ? 'text-gold' : 'text-cream/90',
+            'py-2.5 font-display text-3xl font-bold transition-colors',
+            isActiveGroup(item) ? 'text-gold' : 'text-cream hover:text-gold',
           ]}
         >
           {item.label}
         </a>
         {item.children && (
-          <div class="pl-4 border-l border-cream/10 ml-1 mb-1">
+          <div class="mb-2 flex flex-col items-center gap-1">
             {item.children.map((child) => (
               <a
                 href={child.href}
                 class:list={[
-                  'block py-2 text-sm tracking-wide',
-                  isActive(child.href) ? 'text-gold' : 'text-cream/70',
+                  'py-1.5 text-lg tracking-wide transition-colors',
+                  isActive(child.href) ? 'text-gold' : 'text-cream/70 hover:text-gold',
                 ]}
               >
                 {child.label}
@@ -108,18 +134,69 @@ function isActiveGroup(item: (typeof NAV_ITEMS)[number]) {
             ))}
           </div>
         )}
-      </>
+      </div>
     ))}
-  </nav>
-</header>
+  </div>
+</nav>
 
 <script>
   const toggle = document.getElementById('menu-toggle');
   const menu = document.getElementById('mobile-menu');
+  const header = document.getElementById('site-header');
+
+  function setOpen(open) {
+    toggle?.classList.toggle('is-open', open);
+    menu?.classList.toggle('is-open', open);
+    menu?.classList.toggle('opacity-0', !open);
+    menu?.classList.toggle('pointer-events-none', !open);
+    toggle?.setAttribute('aria-expanded', String(open));
+    toggle?.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+    menu?.setAttribute('aria-hidden', String(!open));
+    document.documentElement.classList.toggle('overflow-hidden', open);
+  }
+
   toggle?.addEventListener('click', () => {
-    const isOpen = !menu?.classList.contains('hidden');
-    menu?.classList.toggle('hidden');
-    menu?.classList.toggle('flex');
-    toggle.setAttribute('aria-expanded', String(!isOpen));
+    setOpen(!menu?.classList.contains('is-open'));
   });
+
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+
+  let lastScrollY = window.scrollY;
+  window.addEventListener(
+    'scroll',
+    () => {
+      const y = window.scrollY;
+      const menuOpen = menu?.classList.contains('is-open');
+      if (!menuOpen) {
+        header?.classList.toggle('-translate-y-full', y > lastScrollY && y > 80);
+      }
+      lastScrollY = y;
+    },
+    { passive: true },
+  );
 </script>
+
+<style>
+  #menu-toggle.is-open .menu-bar:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  #menu-toggle.is-open .menu-bar:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  #menu-toggle.is-open .menu-bar:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+
+  #mobile-menu .mobile-nav-item {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s ease;
+  }
+  #mobile-menu.is-open .mobile-nav-item {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
