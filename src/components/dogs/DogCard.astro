@@ -17,14 +17,14 @@ const hasPedigree = birthDate || sire || dam || (titles && titles.length > 0);
 const Tag = href ? 'a' : 'div';
 ---
 
-<Tag {...(href ? { href } : {})} class="group block bg-white border border-border overflow-hidden">
+<Tag {...(href ? { href } : {})} class:list={['block bg-white border border-border overflow-hidden text-ink', href && 'group']}>
   <div class="aspect-[4/3] bg-placeholder overflow-hidden">
     {photo && (
       <img
         src={urlFor(photo)?.width(600).height(450).url()}
         alt={name}
         loading="lazy"
-        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        class:list={['w-full h-full object-cover', href && 'transition-transform duration-500 group-hover:scale-105']}
       />
     )}
   </div>

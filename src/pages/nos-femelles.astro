@@ -8,7 +8,7 @@ const dogs = await sanityClient.fetch(DOGS_BY_BREED_AND_SEX_QUERY, { breed: 'Bea
 ---
 
 <Layout title="Nos Femelles" description="Les femelles Bearded Collie de l'élevage De Saint Prixe.">
-  <section class="px-6 lg:px-10 py-16 md:py-20">
+  <section class="bg-cream px-6 lg:px-10 py-16 md:py-20">
     <div class="max-w-7xl mx-auto">
       <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-14">Nos Femelles</h1>
       <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -19,7 +19,6 @@ const dogs = await sanityClient.fetch(DOGS_BY_BREED_AND_SEX_QUERY, { breed: 'Bea
             birthDate={d.birthDate}
             sire={d.sire}
             dam={d.dam}
-            titles={d.titles}
             href={d.slug?.current ? `/nos-chiens/${d.slug.current}` : undefined}
           />
         ))}

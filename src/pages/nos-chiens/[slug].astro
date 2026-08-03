@@ -1,5 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Flourish from '../../components/Flourish.astro';
+import Lightbox from '../../components/Lightbox.astro';
 import { urlFor } from '../../lib/sanity/image';
 import { formatDateFr } from '../../lib/status';
 import { sanityClient } from 'sanity:client';
@@ -13,40 +15,83 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const dog = await sanityClient.fetch(DOG_BY_SLUG_QUERY, { slug });
 if (!dog) return Astro.redirect('/nos-chiens');
+
+const identity = [dog.breed, dog.sex].filter(Boolean).join(' · ');
+const stats = [
+  dog.birthDate && { label: 'Né(e) le', value: formatDateFr(dog.birthDate) },
+  dog.sire && { label: 'Père', value: dog.sire },
+  dog.dam && { label: 'Mère', value: dog.dam },
+].filter(Boolean) as { label: string; value: string }[];
 ---
 
-<Layout title={dog.name} description={`${dog.name} — ${dog.breed}, élevage De Saint Prixe.`}>
-  <section class="px-6 lg:px-10 py-16 md:py-20">
-    <div class="max-w-3xl mx-auto text-center">
-      <div class="w-56 h-56 mx-auto rounded-full overflow-hidden border-[5px] border-white shadow-[0_10px_26px_rgba(0,0,0,0.18)] bg-placeholder mb-6">
+<Layout
+  title={dog.name}
+  description={`${dog.name} — ${dog.breed}, élevage De Saint Prixe.`}
+  image={dog.photo ? urlFor(dog.photo)?.width(1200).height(630).url() : undefined}
+  footerBg="ink"
+>
+  <article class="bg-cream min-h-screen px-6 lg:px-10 py-14 md:py-16">
+    <div class="max-w-2xl mx-auto text-center">
+      <a href="/nos-chiens" class="inline-block mb-6 text-sm text-muted-2 hover:text-gold-text transition-colors">
+        ‹ Retour à nos chiens
+      </a>
+
+      <div class="relative aspect-[4/3] overflow-hidden bg-ink shadow-[0_16px_40px_rgba(0,0,0,0.16)] mb-8">
         {dog.photo && (
-          <img src={urlFor(dog.photo)?.width(500).height(500).url()} alt={dog.name} class="w-full h-full object-cover" />
+          <img
+            src={urlFor(dog.photo)?.width(1200).height(900).url()}
+            alt={dog.name}
+            class="w-full h-full object-cover"
+          />
+        )}
+        <div class="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/5 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 px-6 md:px-10 pb-6 md:pb-8 text-center">
+          <h1 class="font-display font-bold text-3xl md:text-5xl text-white mb-1">{dog.name}</h1>
+          {identity && (
+            <p class="text-xs md:text-sm font-semibold uppercase tracking-[0.2em] text-gold">{identity}</p>
+          )}
+        </div>
+      </div>
+
+      <div class="space-y-8">
+        <Flourish width={90} height={12} class="mx-auto" />
+
+        {stats.length > 0 && (
+          <div class="bg-white border border-border grid grid-cols-1 sm:grid-cols-3 divide-y divide-border sm:divide-y-0 sm:divide-x">
+            {stats.map((s) => (
+              <div class="px-6 py-5">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-2 mb-1">{s.label}</p>
+                <p class="font-display font-bold text-base">{s.value}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {dog.titles && dog.titles.length > 0 && (
+          <div class="bg-white border border-border p-8 md:p-10 text-left">
+            <h2 class="font-display font-bold text-lg mb-4 text-center">Palmarès</h2>
+            <ul class="text-sm text-muted space-y-2 max-w-md mx-auto">
+              {dog.titles.map((t: string) => (
+                <li class="flex gap-2">
+                  <span class="text-gold-deep">✦</span>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {dog.gallery && dog.gallery.length > 0 && (
+          <div class="columns-2 sm:columns-3 gap-3 space-y-3 text-left">
+            {dog.gallery.map((img: any) => (
+              <a href={urlFor(img)?.width(1600).url()} data-lightbox={urlFor(img)?.width(1600).url()} class="block bg-placeholder">
+                <img src={urlFor(img)?.width(600).url()} alt="" loading="lazy" class="w-full block" />
+              </a>
+            ))}
+          </div>
         )}
       </div>
-      <h1 class="font-display font-bold text-3xl md:text-4xl mb-4">{dog.name}</h1>
-
-      <div class="text-sm text-muted space-y-1 mb-4">
-        {dog.birthDate && <p>Né(e) le {formatDateFr(dog.birthDate)}</p>}
-        {dog.sire && <p>Père : {dog.sire}</p>}
-        {dog.dam && <p>Mère : {dog.dam}</p>}
-      </div>
-
-      {dog.titles && dog.titles.length > 0 && (
-        <div class="mt-6">
-          <h2 class="font-display font-bold text-lg mb-2">Palmarès</h2>
-          <ul class="text-sm text-muted space-y-1">
-            {dog.titles.map((t: string) => <li>{t}</li>)}
-          </ul>
-        </div>
-      )}
-
-      {dog.gallery && dog.gallery.length > 0 && (
-        <div class="grid grid-cols-3 gap-3 mt-10">
-          {dog.gallery.map((img: any) => (
-            <img src={urlFor(img)?.width(400).height(400).url()} alt="" class="aspect-square object-cover w-full" loading="lazy" />
-          ))}
-        </div>
-      )}
     </div>
-  </section>
+  </article>
+  <Lightbox />
 </Layout>
