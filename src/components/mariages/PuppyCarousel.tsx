@@ -31,7 +31,8 @@ export default function PuppyCarousel({ title, gender, color, birthDate, status,
             src={safeImages[current]}
             alt={title}
             loading="lazy"
-            className={`w-full h-full object-cover ${!ok ? 'grayscale opacity-65' : ''}`}
+            data-lightbox={safeImages[current]}
+            className={`w-full h-full object-cover cursor-pointer ${!ok ? 'grayscale opacity-65' : ''}`}
           />
         )}
 

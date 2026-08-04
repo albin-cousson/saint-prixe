@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Flourish from '../../components/Flourish.astro';
+import Lightbox from '../../components/Lightbox.astro';
 import CoupleMedallion from '../../components/mariages/CoupleMedallion.astro';
 import PuppyCarousel from '../../components/mariages/PuppyCarousel';
 import { sanityClient } from 'sanity:client';
@@ -91,4 +92,5 @@ const litterIsFuture = mariage.litterDate ? new Date(mariage.litterDate).getTime
       )}
     </div>
   </section>
+  <Lightbox />
 </Layout>

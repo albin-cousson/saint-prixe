@@ -13,18 +13,27 @@ const photoClass = isHero ? 'w-32 sm:w-40 md:w-48' : 'w-28 sm:w-32 md:w-36';
 const ampersandClass = isHero ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl';
 const imgWidth = isHero ? 600 : 400;
 const imgHeight = isHero ? 450 : 300;
+const PhotoTag = isHero ? 'a' : 'div';
 ---
 
 <div class="flex items-center justify-center gap-3 sm:gap-4">
-  <div class:list={[photoClass, 'shrink-0 aspect-[4/3] overflow-hidden bg-placeholder shadow-[0_8px_20px_rgba(0,0,0,0.16)]']}>
+  <PhotoTag
+    href={isHero && groomPhoto ? urlFor(groomPhoto)?.width(1600).url() : undefined}
+    data-lightbox={isHero && groomPhoto ? urlFor(groomPhoto)?.width(1600).url() : undefined}
+    class:list={[photoClass, 'shrink-0 aspect-[4/3] overflow-hidden bg-placeholder shadow-[0_8px_20px_rgba(0,0,0,0.16)] block']}
+  >
     {groomPhoto && (
       <img src={urlFor(groomPhoto)?.width(imgWidth).height(imgHeight).url()} alt="" class="w-full h-full object-cover" loading="lazy" />
     )}
-  </div>
+  </PhotoTag>
   <span class:list={['shrink-0 font-display italic text-gold-text', ampersandClass]} aria-hidden="true">&amp;</span>
-  <div class:list={[photoClass, 'shrink-0 aspect-[4/3] overflow-hidden bg-placeholder shadow-[0_8px_20px_rgba(0,0,0,0.16)]']}>
+  <PhotoTag
+    href={isHero && bridePhoto ? urlFor(bridePhoto)?.width(1600).url() : undefined}
+    data-lightbox={isHero && bridePhoto ? urlFor(bridePhoto)?.width(1600).url() : undefined}
+    class:list={[photoClass, 'shrink-0 aspect-[4/3] overflow-hidden bg-placeholder shadow-[0_8px_20px_rgba(0,0,0,0.16)] block']}
+  >
     {bridePhoto && (
       <img src={urlFor(bridePhoto)?.width(imgWidth).height(imgHeight).url()} alt="" class="w-full h-full object-cover" loading="lazy" />
     )}
-  </div>
+  </PhotoTag>
 </div>

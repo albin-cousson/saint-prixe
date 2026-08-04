@@ -41,13 +41,13 @@
     lightboxImg.src = '';
   }
 
-  document.querySelectorAll('[data-lightbox]').forEach((el) => {
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      const src = el.getAttribute('data-lightbox') || '';
-      const alt = el.getAttribute('data-lightbox-alt') || '';
-      openLightbox(src, alt);
-    });
+  document.addEventListener('click', (e) => {
+    const el = (e.target as HTMLElement)?.closest('[data-lightbox]');
+    if (!el) return;
+    e.preventDefault();
+    const src = el.getAttribute('data-lightbox') || '';
+    const alt = el.getAttribute('data-lightbox-alt') || '';
+    openLightbox(src, alt);
   });
 
   closeBtn?.addEventListener('click', closeLightbox);
