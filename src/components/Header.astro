@@ -1,20 +1,40 @@
 ---
-import { NAV_ITEMS } from '../lib/nav';
 import Flourish from './Flourish.astro';
 import { sanityClient } from 'sanity:client';
 import { SITE_SETTINGS_QUERY } from '../lib/sanity/queries';
 
+type NavItem = { label: string; href: string; children?: { label: string; href: string }[] };
+
+/** Matches the live site's real menu — used only if Sanity's navItems is empty. */
+const FALLBACK_NAV_ITEMS: NavItem[] = [
+  { label: 'Accueil', href: '/' },
+  { label: 'A propos', href: '/a-propos' },
+  { label: 'Actualités', href: '/actualites' },
+  {
+    label: 'Nos Chiens',
+    href: '/nos-chiens',
+    children: [
+      { label: 'Nos Mâles', href: '/nos-males' },
+      { label: 'Nos Femelles', href: '/nos-femelles' },
+    ],
+  },
+  { label: 'Nos Portées', href: '/nos-portees' },
+  { label: 'Portfolio', href: '/portfolio' },
+  { label: 'Contact', href: '/contact' },
+];
+
 const settings = await sanityClient.fetch(SITE_SETTINGS_QUERY);
 const siteName = settings?.siteName || 'De Saint Prixe';
-const tagline = settings?.tagline || 'Élevage de Bearded Collie';
+const tagline = settings?.tagline || 'Élevage de Bearded Collies';
 const [siteNameFirstWord, ...siteNameRestWords] = siteName.split(' ');
 const siteNameRest = siteNameRestWords.join(' ');
+const NAV_ITEMS: NavItem[] = settings?.navItems?.length > 0 ? settings.navItems : FALLBACK_NAV_ITEMS;
 
 const currentPath = Astro.url.pathname;
 function isActive(href: string) {
   return href === '/' ? currentPath === '/' : currentPath.startsWith(href);
 }
-function isActiveGroup(item: (typeof NAV_ITEMS)[number]) {
+function isActiveGroup(item: NavItem) {
   return isActive(item.href) || (item.children?.some((c) => isActive(c.href)) ?? false);
 }
 ---
@@ -113,7 +133,7 @@ function isActiveGroup(item: (typeof NAV_ITEMS)[number]) {
         <a
           href={item.href}
           class:list={[
-            'py-2.5 font-display text-3xl font-bold transition-colors',
+            'py-2 font-display text-2xl tracking-wide transition-colors',
             isActiveGroup(item) ? 'text-gold' : 'text-cream hover:text-gold',
           ]}
         >
@@ -125,8 +145,8 @@ function isActiveGroup(item: (typeof NAV_ITEMS)[number]) {
               <a
                 href={child.href}
                 class:list={[
-                  'py-1.5 text-lg tracking-wide transition-colors',
-                  isActive(child.href) ? 'text-gold' : 'text-cream/70 hover:text-gold',
+                  'py-1 text-sm tracking-[0.15em] uppercase transition-colors',
+                  isActive(child.href) ? 'text-gold' : 'text-cream/60 hover:text-gold',
                 ]}
               >
                 {child.label}

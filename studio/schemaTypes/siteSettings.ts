@@ -10,14 +10,40 @@ export default defineType({
     defineField({
       name: 'navItems',
       title: 'Menu de navigation',
+      description: 'Ordre = ordre d\'affichage dans le menu. Ajoutez des sous-liens pour créer un sous-menu (ex : "Nos Chiens" > "Nos Mâles"/"Nos Femelles").',
       type: 'array',
       of: [
         {
           type: 'object',
+          name: 'navItem',
+          title: 'Lien de menu',
           fields: [
-            {name: 'label', title: 'Libellé', type: 'string'},
-            {name: 'href', title: 'Lien', type: 'string'},
+            {name: 'label', title: 'Libellé', type: 'string', validation: (Rule) => Rule.required()},
+            {name: 'href', title: 'Lien (ex : /a-propos)', type: 'string', validation: (Rule) => Rule.required()},
+            {
+              name: 'children',
+              title: 'Sous-menu',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  name: 'navSubItem',
+                  title: 'Sous-lien',
+                  fields: [
+                    {name: 'label', title: 'Libellé', type: 'string', validation: (Rule) => Rule.required()},
+                    {name: 'href', title: 'Lien (ex : /nos-males)', type: 'string', validation: (Rule) => Rule.required()},
+                  ],
+                  preview: {select: {title: 'label', subtitle: 'href'}},
+                },
+              ],
+            },
           ],
+          preview: {
+            select: {title: 'label', subtitle: 'href', children: 'children'},
+            prepare({title, subtitle, children}) {
+              return {title, subtitle: children?.length ? `${subtitle} (+${children.length} sous-lien${children.length > 1 ? 's' : ''})` : subtitle}
+            },
+          },
         },
       ],
     }),
@@ -38,6 +64,5 @@ export default defineType({
         },
       ],
     }),
-    defineField({name: 'footerText', title: 'Texte de pied de page / copyright', type: 'string'}),
   ],
 })

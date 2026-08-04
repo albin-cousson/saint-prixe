@@ -12,8 +12,11 @@ import homePage from './homePage'
 import aboutPage from './aboutPage'
 import contactPage from './contactPage'
 import portfolioPage from './portfolioPage'
-import inquiryPage from './inquiryPage'
 import actualitesPage from './actualitesPage'
+import nosChiensPage from './nosChiensPage'
+import nosMalesPage from './nosMalesPage'
+import nosFemellesPage from './nosFemellesPage'
+import nosPorteesPage from './nosPorteesPage'
 
 export const schemaTypes = [
   // Singletons (site-wide / one per page)
@@ -22,8 +25,11 @@ export const schemaTypes = [
   aboutPage,
   contactPage,
   portfolioPage,
-  inquiryPage,
   actualitesPage,
+  nosChiensPage,
+  nosMalesPage,
+  nosFemellesPage,
+  nosPorteesPage,
   // Repeatable documents
   dog,
   mariage,

@@ -6,14 +6,14 @@ import { sanityClient } from 'sanity:client';
 import {
   HOME_PAGE_QUERY,
   BLOG_POSTS_QUERY,
-  DOGS_BY_BREED_AND_SEX_QUERY,
+  DOGS_BY_SEX_QUERY,
   MARIAGES_WITH_CHIOTS_QUERY,
 } from '../lib/sanity/queries';
 
 const home = await sanityClient.fetch(HOME_PAGE_QUERY);
 const recentPosts = await sanityClient.fetch(BLOG_POSTS_QUERY);
-const males = await sanityClient.fetch(DOGS_BY_BREED_AND_SEX_QUERY, { breed: 'Bearded Collie', sex: 'Mâle' });
-const femelles = await sanityClient.fetch(DOGS_BY_BREED_AND_SEX_QUERY, { breed: 'Bearded Collie', sex: 'Femelle' });
+const males = await sanityClient.fetch(DOGS_BY_SEX_QUERY, { sex: 'Mâle' });
+const femelles = await sanityClient.fetch(DOGS_BY_SEX_QUERY, { sex: 'Femelle' });
 const mariages = await sanityClient.fetch(MARIAGES_WITH_CHIOTS_QUERY);
 ---
 

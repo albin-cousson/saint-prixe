@@ -13,9 +13,9 @@ const lastSectionIsAlt = rest.length > 0 ? (rest.length - 1) % 2 === 0 : false;
 ---
 
 <Layout
-  title="À propos"
+  title={page?.title || 'À propos'}
   description="À propos de l'élevage De Saint Prixe."
-  image={page?.heroImage ? urlFor(page.heroImage)?.width(1200).height(630).url() : undefined}
+  image={intro?.image ? urlFor(intro.image)?.width(1200).height(630).url() : undefined}
   footerBg={lastSectionIsAlt ? 'cream' : 'ink'}
 >
   {intro && (
@@ -72,6 +72,16 @@ const lastSectionIsAlt = rest.length > 0 ? (rest.length - 1) % 2 === 0 : false;
             <div class:list={['prose-body prose-body--dropcap text-[17px] leading-relaxed text-center lg:text-left', mutedClass]}>
               <PortableText value={s.body} />
             </div>
+            {s.ctaHref && (
+              <p class="text-center lg:text-left mt-4">
+                <a
+                  href={s.ctaHref}
+                  class:list={['inline-block text-sm font-semibold transition-colors', isAlt ? 'text-gold hover:text-cream' : 'text-gold-text hover:text-gold-deep']}
+                >
+                  {s.ctaLabel || 'En savoir plus'} ›
+                </a>
+              </p>
+            )}
           </div>
         </div>
       </section>

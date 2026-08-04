@@ -2,17 +2,18 @@
 import Layout from '../../layouts/Layout.astro';
 import MariageCard from '../../components/mariages/MariageCard.astro';
 import { sanityClient } from 'sanity:client';
-import { MARIAGES_WITH_CHIOTS_QUERY } from '../../lib/sanity/queries';
+import { MARIAGES_WITH_CHIOTS_QUERY, NOS_PORTEES_PAGE_QUERY } from '../../lib/sanity/queries';
 
+const page = await sanityClient.fetch(NOS_PORTEES_PAGE_QUERY);
 const mariages = await sanityClient.fetch(MARIAGES_WITH_CHIOTS_QUERY);
 ---
 
-<Layout title="Nos Portées" description="Découvrez nos couples et les chiots disponibles à l'élevage De Saint Prixe.">
+<Layout title={page?.title || 'Nos Portées'} description="Découvrez nos couples et les chiots disponibles à l'élevage De Saint Prixe.">
   <section class="bg-cream px-6 lg:px-10 py-16 md:py-20">
     <div class="max-w-7xl mx-auto">
-      <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-3">Nos Portées</h1>
+      <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-3">{page?.title || 'Nos Portées'}</h1>
       <p class="text-center text-muted max-w-2xl mx-auto mb-14">
-        Découvrez nos couples et les chiots disponibles, portée par portée.
+        {page?.intro || 'Découvrez nos couples et les chiots disponibles, portée par portée.'}
       </p>
 
       {mariages.length === 0 ? (

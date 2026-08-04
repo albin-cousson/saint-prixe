@@ -1,17 +1,17 @@
 import { useState } from 'react';
-import { isAvailable } from '../../lib/status';
+import { isAvailable, formatDateFr } from '../../lib/status';
 
 interface Props {
   title: string;
   gender?: string;
   color?: string;
+  birthDate?: string;
   status?: string;
   description?: string;
-  lofNumber?: string;
   images: string[]; // pre-resolved Sanity CDN URLs
 }
 
-export default function PuppyCarousel({ title, gender, color, status, description, lofNumber, images }: Props) {
+export default function PuppyCarousel({ title, gender, color, birthDate, status, description, images }: Props) {
   const [index, setIndex] = useState(0);
   const ok = isAvailable(status);
   const safeImages = images.length ? images : [''];
@@ -21,7 +21,7 @@ export default function PuppyCarousel({ title, gender, color, status, descriptio
     setIndex((i) => (i + delta + safeImages.length) % safeImages.length);
   };
 
-  const meta = [gender, color].filter(Boolean).join(' · ');
+  const meta = [gender, color, birthDate && `Né(e) le ${formatDateFr(birthDate)}`].filter(Boolean).join(' · ');
 
   return (
     <div className={ok ? 'text-center' : 'text-center opacity-100'}>
@@ -77,7 +77,6 @@ export default function PuppyCarousel({ title, gender, color, status, descriptio
       </div>
       {meta && <p className="text-xs text-muted-2 mt-2.5">{meta}</p>}
       {description && <p className="text-xs text-muted mt-1.5 leading-relaxed">{description}</p>}
-      {lofNumber && <p className="text-[11px] text-muted-2 mt-1">LOF {lofNumber}</p>}
       {ok && (
         <a
           href={`/contact?sujet=${encodeURIComponent(`ce chiot : ${title}`)}`}

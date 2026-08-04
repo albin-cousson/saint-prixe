@@ -35,9 +35,7 @@ export default defineType({
       options: {list: ['Disponible', 'Réservé', 'Vendu']},
       initialValue: 'Disponible',
     }),
-    defineField({name: 'price', title: 'Prix (usage interne, non affiché publiquement)', type: 'number'}),
     defineField({name: 'description', title: 'Description', type: 'text'}),
-    defineField({name: 'lofNumber', title: 'N° LOF / identification', type: 'string'}),
   ],
   preview: {
     select: {title: 'title', subtitle: 'status', media: 'photo'},

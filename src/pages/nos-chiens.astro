@@ -2,18 +2,19 @@
 import Layout from '../layouts/Layout.astro';
 import DogCard from '../components/dogs/DogCard.astro';
 import { sanityClient } from 'sanity:client';
-import { DOGS_BY_BREED_AND_SEX_QUERY } from '../lib/sanity/queries';
+import { DOGS_BY_SEX_QUERY, NOS_CHIENS_PAGE_QUERY } from '../lib/sanity/queries';
 
-const males = (await sanityClient.fetch(DOGS_BY_BREED_AND_SEX_QUERY, { breed: 'Bearded Collie', sex: 'Mâle' })).slice(0, 3);
-const femelles = (await sanityClient.fetch(DOGS_BY_BREED_AND_SEX_QUERY, { breed: 'Bearded Collie', sex: 'Femelle' })).slice(0, 3);
+const page = await sanityClient.fetch(NOS_CHIENS_PAGE_QUERY);
+const males = (await sanityClient.fetch(DOGS_BY_SEX_QUERY, { sex: 'Mâle' })).slice(0, 3);
+const femelles = (await sanityClient.fetch(DOGS_BY_SEX_QUERY, { sex: 'Femelle' })).slice(0, 3);
 ---
 
-<Layout title="Nos Chiens" description="Découvrez les Bearded Collies de l'élevage De Saint Prixe.">
+<Layout title={page?.title || 'Nos Chiens'} description="Découvrez les Bearded Collies de l'élevage De Saint Prixe.">
   <section class="bg-cream px-6 lg:px-10 py-16 md:py-20">
     <div class="max-w-7xl mx-auto">
-      <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-3">Nos Chiens</h1>
+      <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-3">{page?.title || 'Nos Chiens'}</h1>
       <p class="text-center text-muted max-w-2xl mx-auto mb-14">
-        Nos chiens sont au cœur de notre passion et de nos projets d'élevage.
+        {page?.intro || "Nos chiens sont au cœur de notre passion et de nos projets d'élevage."}
       </p>
 
       <div class="mb-16">

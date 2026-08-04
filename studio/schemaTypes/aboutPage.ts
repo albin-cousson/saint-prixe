@@ -6,7 +6,6 @@ export default defineType({
   type: 'document',
   fields: [
     defineField({name: 'title', title: 'Titre', type: 'string'}),
-    defineField({name: 'heroImage', title: 'Image principale', type: 'image', options: {hotspot: true}}),
     defineField({name: 'sections', title: 'Sections', type: 'array', of: [{type: 'pageSection'}]}),
   ],
   preview: {

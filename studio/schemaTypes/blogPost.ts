@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {isUniqueSlug} from '../lib/isUniqueSlug'
 
 export default defineType({
   name: 'blogPost',
@@ -9,9 +10,10 @@ export default defineType({
     defineField({
       name: 'slug',
       title: 'Slug',
+      description: "Se remplit automatiquement depuis le titre. En cas de doublon, ajoutez un chiffre à la fin.",
       type: 'slug',
       options: {source: 'title'},
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().custom(isUniqueSlug('blogPost')),
     }),
     defineField({name: 'publishedAt', title: 'Date de publication', type: 'date'}),
     defineField({name: 'coverImage', title: 'Image de couverture', type: 'image', options: {hotspot: true}}),
@@ -30,11 +32,6 @@ export default defineType({
         {type: 'block'},
         {type: 'image', options: {hotspot: true}},
       ],
-    }),
-    defineField({
-      name: 'sourceUrl',
-      title: 'URL Wix d\'origine (référence, non affichée)',
-      type: 'url',
     }),
   ],
   preview: {

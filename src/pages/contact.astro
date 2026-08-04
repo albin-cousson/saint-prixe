@@ -2,8 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import Flourish from '../components/Flourish.astro';
 import { sanityClient } from 'sanity:client';
-import { SITE_SETTINGS_QUERY } from '../lib/sanity/queries';
+import { SITE_SETTINGS_QUERY, CONTACT_PAGE_QUERY } from '../lib/sanity/queries';
 
+const page = await sanityClient.fetch(CONTACT_PAGE_QUERY);
 const settings = await sanityClient.fetch(SITE_SETTINGS_QUERY);
 const email = settings?.email || 'aurelie.cousson68@gmail.com';
 const phone = settings?.phone || '06 70 91 05 26';
@@ -15,15 +16,14 @@ const mapQuery = encodeURIComponent(addressLines.join(', '));
 const mapEmbedSrc = `https://www.google.com/maps?q=${mapQuery}&output=embed`;
 ---
 
-<Layout title="Contact" description="Contactez l'élevage De Saint Prixe." footerBg="ink">
+<Layout title={page?.title || 'Contact'} description="Contactez l'élevage De Saint Prixe." footerBg="ink">
   <section class="bg-cream px-6 lg:px-10 py-16 md:py-20">
     <div class="max-w-5xl mx-auto">
       <div class="text-center mb-14">
-        <h1 class="font-display font-bold text-3xl md:text-4xl mb-3">Contact</h1>
+        <h1 class="font-display font-bold text-3xl md:text-4xl mb-3">{page?.title || 'Contact'}</h1>
         <Flourish width={90} height={12} class="mx-auto mb-4" />
         <p class="text-sm text-muted max-w-md mx-auto">
-          Une question sur nos chiens ou une prochaine portée ? Nous répondons avec plaisir, par e-mail ou par
-          téléphone.
+          {page?.intro || 'Une question sur nos chiens ou une prochaine portée ? Nous répondons avec plaisir, par e-mail ou par téléphone.'}
         </p>
       </div>
 

@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Lightbox from '../components/Lightbox.astro';
 import { urlFor } from '../lib/sanity/image';
 import { sanityClient } from 'sanity:client';
 import { PORTFOLIO_PAGE_QUERY } from '../lib/sanity/queries';
@@ -8,20 +9,26 @@ const page = await sanityClient.fetch(PORTFOLIO_PAGE_QUERY);
 const images = (page?.images || []).filter((img: any) => (img.width ?? 0) > 100);
 ---
 
-<Layout title="Portfolio" description="Portfolio photo de l'élevage De Saint Prixe." footerBg="ink">
+<Layout title={page?.title || 'Portfolio'} description="Portfolio photo de l'élevage De Saint Prixe." footerBg="ink">
   <section class="bg-cream px-6 lg:px-10 py-16 md:py-20">
     <div class="max-w-7xl mx-auto">
-      <h1 class="font-display font-bold text-3xl md:text-4xl text-center mb-14">Portfolio</h1>
+      <h1 class:list={['font-display font-bold text-3xl md:text-4xl text-center', page?.intro ? 'mb-3' : 'mb-14']}>
+        {page?.title || 'Portfolio'}
+      </h1>
+      {page?.intro && <p class="text-center text-muted max-w-2xl mx-auto mb-14">{page.intro}</p>}
       <div class="columns-2 sm:columns-3 lg:columns-4 gap-4 space-y-4">
         {images.map((img: any) => (
-          <img
-            src={urlFor(img)?.width(600).url()}
-            alt=""
-            loading="lazy"
-            class="w-full block"
-          />
+          <a href={urlFor(img)?.width(1600).url()} data-lightbox={urlFor(img)?.width(1600).url()} class="block">
+            <img
+              src={urlFor(img)?.width(600).url()}
+              alt=""
+              loading="lazy"
+              class="w-full block"
+            />
+          </a>
         ))}
       </div>
     </div>
   </section>
+  <Lightbox />
 </Layout>

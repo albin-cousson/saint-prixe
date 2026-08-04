@@ -16,7 +16,6 @@ const { slug } = Astro.params;
 const dog = await sanityClient.fetch(DOG_BY_SLUG_QUERY, { slug });
 if (!dog) return Astro.redirect('/nos-chiens');
 
-const identity = [dog.breed, dog.sex].filter(Boolean).join(' · ');
 const stats = [
   dog.birthDate && { label: 'Né(e) le', value: formatDateFr(dog.birthDate) },
   dog.sire && { label: 'Père', value: dog.sire },
@@ -26,7 +25,7 @@ const stats = [
 
 <Layout
   title={dog.name}
-  description={`${dog.name} — ${dog.breed}, élevage De Saint Prixe.`}
+  description={`${dog.name} — Bearded Collie, élevage De Saint Prixe.`}
   image={dog.photo ? urlFor(dog.photo)?.width(1200).height(630).url() : undefined}
   footerBg="ink"
 >
@@ -47,8 +46,8 @@ const stats = [
         <div class="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/5 to-transparent"></div>
         <div class="absolute inset-x-0 bottom-0 px-6 md:px-10 pb-6 md:pb-8 text-center">
           <h1 class="font-display font-bold text-3xl md:text-5xl text-white mb-1">{dog.name}</h1>
-          {identity && (
-            <p class="text-xs md:text-sm font-semibold uppercase tracking-[0.2em] text-gold">{identity}</p>
+          {dog.sex && (
+            <p class="text-xs md:text-sm font-semibold uppercase tracking-[0.2em] text-gold">{dog.sex}</p>
           )}
         </div>
       </div>
@@ -65,6 +64,19 @@ const stats = [
               </div>
             ))}
           </div>
+        )}
+
+        {dog.pedigreeFile?.url && (
+          <a
+            href={dog.pedigreeFile.url}
+            download={dog.pedigreeFile.filename}
+            class="inline-flex items-center gap-2 border border-ink/25 hover:border-gold-deep hover:text-gold-text px-6 py-3 text-sm font-semibold transition-colors"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            Télécharger le pedigree
+          </a>
         )}
 
         {dog.titles && dog.titles.length > 0 && (

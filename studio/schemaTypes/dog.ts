@@ -1,18 +1,12 @@
 import {defineField, defineType} from 'sanity'
+import {isUniqueSlug} from '../lib/isUniqueSlug'
 
 export default defineType({
   name: 'dog',
-  title: 'Chien (Nos Chiens / Mâles / Femelles / Shih Tzu)',
+  title: 'Chien (Nos Chiens / Mâles / Femelles)',
   type: 'document',
   fields: [
     defineField({name: 'name', title: 'Nom', type: 'string', validation: (Rule) => Rule.required()}),
-    defineField({
-      name: 'breed',
-      title: 'Race',
-      type: 'string',
-      options: {list: ['Bearded Collie', 'Shih Tzu']},
-      validation: (Rule) => Rule.required(),
-    }),
     defineField({
       name: 'sex',
       title: 'Sexe',
@@ -35,20 +29,24 @@ export default defineType({
       title: 'Palmarès',
       type: 'array',
       of: [{type: 'string'}],
-      description: 'Un titre par ligne (facultatif — les Shih Tzu n\'en ont pas)',
+      description: 'Un titre par ligne (facultatif)',
     }),
-    defineField({name: 'slug', title: 'Slug', type: 'slug', options: {source: 'name'}}),
     defineField({
-      name: 'displayOrder',
-      title: "Ordre d'affichage",
-      type: 'number',
-      description: 'Plus petit = affiché en premier',
+      name: 'pedigreeFile',
+      title: 'Document pedigree (PDF)',
+      type: 'file',
+      description: 'Facultatif — si présent, un bouton de téléchargement apparaît sur la fiche du chien.',
+    }),
+    defineField({
+      name: 'slug',
+      title: 'Slug',
+      description: "Se remplit automatiquement depuis le nom. En cas de doublon, ajoutez un chiffre à la fin.",
+      type: 'slug',
+      options: {source: 'name'},
+      validation: (Rule) => Rule.required().custom(isUniqueSlug('dog')),
     }),
   ],
   preview: {
-    select: {title: 'name', subtitle: 'breed', media: 'photo'},
+    select: {title: 'name', subtitle: 'sex', media: 'photo'},
   },
-  orderings: [
-    {title: "Ordre d'affichage", name: 'displayOrderAsc', by: [{field: 'displayOrder', direction: 'asc'}]},
-  ],
 })
