@@ -24,6 +24,7 @@
     "astro-portabletext": "^0.13.0",
     "canvas-confetti": "^1.9.4",
     "groq": "^6.8.0",
+    "nodemailer": "^9.0.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-is": "^19.2.8",
