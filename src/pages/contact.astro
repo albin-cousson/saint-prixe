@@ -30,7 +30,11 @@ const mapEmbedSrc = `https://www.google.com/maps?q=${mapQuery}&output=embed`;
       <div class="grid lg:grid-cols-5 gap-8 items-stretch">
         <div class="lg:col-span-3 bg-white border border-border p-8 md:p-10">
           <h2 class="font-display font-bold text-xl mb-5">Nous écrire</h2>
-          <form id="contact-form" class="space-y-4" novalidate>
+          <form id="contact-form" name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" class="space-y-4" novalidate>
+            <input type="hidden" name="form-name" value="contact" />
+            <p class="hidden">
+              <label>Ne pas remplir si vous êtes humain : <input name="bot-field" /></label>
+            </p>
             <div>
               <label for="name" class="block text-sm font-medium mb-1">Nom</label>
               <input id="name" name="name" type="text" required autocomplete="name" class="w-full border border-border px-4 py-2.5 text-sm focus:outline-none focus:border-gold-deep" />
@@ -49,8 +53,11 @@ const mapEmbedSrc = `https://www.google.com/maps?q=${mapQuery}&output=embed`;
             <button type="submit" class="bg-gold hover:brightness-95 text-ink font-semibold px-6 py-3 text-sm transition">
               Envoyer
             </button>
+            <p id="contact-success" class="hidden text-sm text-green-700 mt-2">
+              Merci, votre message a bien été envoyé !
+            </p>
             <p id="contact-fallback" class="hidden text-xs text-muted-2 mt-2">
-              Votre messagerie ne s'est pas ouverte ? Écrivez-nous directement à
+              Une erreur est survenue. Écrivez-nous directement à
               <a href={`mailto:${email}`} class="underline hover:text-gold-text">{email}</a>.
             </p>
           </form>
@@ -102,9 +109,11 @@ const mapEmbedSrc = `https://www.google.com/maps?q=${mapQuery}&output=embed`;
   </section>
 </Layout>
 
-<script define:vars={{ email }}>
+<script>
   const form = document.getElementById('contact-form');
+  const success = document.getElementById('contact-success');
   const fallback = document.getElementById('contact-fallback');
+  const submitBtn = form?.querySelector('button[type="submit"]');
 
   function showError(name, show) {
     const field = form?.querySelector(`[name="${name}"]`);
@@ -115,6 +124,9 @@ const mapEmbedSrc = `https://www.google.com/maps?q=${mapQuery}&output=embed`;
 
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
+    success?.classList.add('hidden');
+    fallback?.classList.add('hidden');
+
     const data = new FormData(form);
     const name = String(data.get('name') || '').trim();
     const emailValue = String(data.get('email') || '').trim();
@@ -130,9 +142,21 @@ const mapEmbedSrc = `https://www.google.com/maps?q=${mapQuery}&output=embed`;
 
     if (!nameValid || !emailValid || !messageValid) return;
 
-    const subject = encodeURIComponent(`Message de ${name} — via le site`);
-    const body = encodeURIComponent(`${message}\n\nRépondre à : ${emailValue}`);
-    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-    fallback?.classList.remove('hidden');
+    submitBtn?.setAttribute('disabled', 'true');
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(data).toString(),
+    })
+      .then(() => {
+        success?.classList.remove('hidden');
+        form.reset();
+      })
+      .catch(() => {
+        fallback?.classList.remove('hidden');
+      })
+      .finally(() => {
+        submitBtn?.removeAttribute('disabled');
+      });
   });
 </script>
