@@ -17,7 +17,7 @@ const dog = await sanityClient.fetch(DOG_BY_SLUG_QUERY, { slug });
 if (!dog) return Astro.redirect('/nos-chiens');
 
 const stats = [
-  dog.birthDate && { label: 'Né(e) le', value: formatDateFr(dog.birthDate) },
+  !dog.deathDate && dog.birthDate && { label: 'Né(e) le', value: formatDateFr(dog.birthDate) },
   dog.sire && { label: 'Père', value: dog.sire },
   dog.dam && { label: 'Mère', value: dog.dam },
 ].filter(Boolean) as { label: string; value: string }[];
@@ -54,6 +54,24 @@ const stats = [
 
       <div class="space-y-8">
         <Flourish width={90} height={12} class="mx-auto" />
+
+        {dog.deathDate && (
+          <div class="bg-ink text-cream border border-ink p-8 md:p-10 text-center">
+            <span class="inline-block text-gold text-xl mb-3" aria-hidden="true">✦</span>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.25em] text-gold mb-2">
+              En mémoire de {dog.name}
+            </p>
+            <p class="font-display font-bold text-base text-cream/85 mb-5">
+              {dog.birthDate && `${formatDateFr(dog.birthDate)} — `}{formatDateFr(dog.deathDate)}
+            </p>
+            {dog.memorialText && (
+              <p class="font-display italic text-lg leading-relaxed text-cream max-w-lg mx-auto">
+                "{dog.memorialText}"
+              </p>
+            )}
+            <Flourish width={70} height={10} class="mx-auto mt-6" />
+          </div>
+        )}
 
         {stats.length > 0 && (
           <div class="bg-white border border-border grid grid-cols-1 sm:grid-cols-3 divide-y divide-border sm:divide-y-0 sm:divide-x">

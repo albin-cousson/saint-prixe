@@ -14,7 +14,13 @@ export default defineType({
       options: {list: ['Mâle', 'Femelle']},
       description: 'Laisser vide si non confirmé plutôt que de deviner.',
     }),
-    defineField({name: 'photo', title: 'Photo principale', type: 'image', options: {hotspot: true}}),
+    defineField({
+      name: 'photo',
+      title: 'Photo principale',
+      type: 'image',
+      description: 'Cliquez sur la photo pour ajuster le cadrage — l\'aperçu "Carte (4:3)" montre exactement comment elle apparaîtra sur Nos Chiens / Nos Mâles / Nos Femelles.',
+      options: {hotspot: {previews: [{title: 'Carte (4:3)', aspectRatio: 4 / 3}]}},
+    }),
     defineField({
       name: 'gallery',
       title: 'Galerie',
@@ -22,6 +28,14 @@ export default defineType({
       of: [{type: 'image', options: {hotspot: true}}],
     }),
     defineField({name: 'birthDate', title: 'Date de naissance', type: 'date'}),
+    defineField({name: 'deathDate', title: 'Date de décès', type: 'date', description: 'Laisser vide si le chien est toujours parmi nous.'}),
+    defineField({
+      name: 'memorialText',
+      title: 'Texte en hommage',
+      type: 'text',
+      description: "Affiché uniquement si une date de décès est renseignée — un hommage sur la fiche du chien, pour ne jamais l'oublier.",
+      hidden: ({document}) => !document?.deathDate,
+    }),
     defineField({name: 'sire', title: 'Père', type: 'string'}),
     defineField({name: 'dam', title: 'Mère', type: 'string'}),
     defineField({
