@@ -16,7 +16,13 @@ export default defineType({
       validation: (Rule) => Rule.required().custom(isUniqueSlug('blogPost')),
     }),
     defineField({name: 'publishedAt', title: 'Date de publication', type: 'date'}),
-    defineField({name: 'coverImage', title: 'Image de couverture', type: 'image', options: {hotspot: true}}),
+    defineField({
+      name: 'coverImage',
+      title: 'Image de couverture',
+      type: 'image',
+      description: 'Cliquez sur la photo pour ajuster le cadrage — l\'aperçu "Carte (4:3)" montre exactement comment elle apparaîtra sur la liste des actualités.',
+      options: {hotspot: {previews: [{title: 'Carte (4:3)', aspectRatio: 4 / 3}]}},
+    }),
     defineField({
       name: 'gallery',
       title: 'Galerie (photos secondaires)',

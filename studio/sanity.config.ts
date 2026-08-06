@@ -3,6 +3,8 @@ import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemaTypes'
 import {structure} from './structure'
+import {PublishAllTool, PublishAllIcon} from './components/PublishAllTool'
+import {createGallerySyncPublishAction} from './actions/gallerySyncPublishAction'
 
 export default defineConfig({
   name: 'default',
@@ -16,4 +18,23 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
   },
+
+  document: {
+    actions: (prev, context) =>
+      prev.map((action) =>
+        action.action === 'publish'
+          ? createGallerySyncPublishAction(action, context.getClient)
+          : action,
+      ),
+  },
+
+  tools: (prev) => [
+    ...prev,
+    {
+      name: 'publish-all',
+      title: 'Publier tout',
+      icon: PublishAllIcon,
+      component: PublishAllTool,
+    },
+  ],
 })
