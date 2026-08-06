@@ -46,7 +46,9 @@ const litterIsFuture = mariage.litterDate ? new Date(mariage.litterDate).getTime
         )}
 
         {mariage.litterDate && (
-          <p class="text-sm text-muted-2 mt-3.5">🐾 Chiots nés le {formatDateFr(mariage.litterDate)}</p>
+          <p class="text-sm text-muted-2 mt-3.5">
+            🐾 {litterIsFuture ? 'Naissance des chiots prévue le' : 'Chiots nés le'} {formatDateFr(mariage.litterDate)}
+          </p>
         )}
       </div>
 
