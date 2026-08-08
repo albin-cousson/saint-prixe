@@ -120,6 +120,7 @@ function isActiveGroup(item: NavItem) {
   id="mobile-menu"
   aria-label="Menu mobile"
   aria-hidden="true"
+  inert
   class="fixed inset-0 z-[60] flex flex-col bg-ink text-cream opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"
 >
   <div class="flex flex-1 flex-col items-center justify-center gap-1 overflow-y-auto px-8 py-24">
@@ -172,6 +173,7 @@ function isActiveGroup(item: NavItem) {
     toggle?.setAttribute('aria-expanded', String(open));
     toggle?.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
     menu?.setAttribute('aria-hidden', String(!open));
+    menu?.toggleAttribute('inert', !open);
     document.documentElement.classList.toggle('overflow-hidden', open);
   }
 
