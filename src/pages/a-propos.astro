@@ -31,7 +31,7 @@ const lastSectionIsAlt = rest.length > 0 ? (rest.length - 1) % 2 === 0 : false;
           <div class="mb-10 aspect-[16/9] overflow-hidden bg-placeholder">
             <img
               src={urlFor(intro.image)?.width(1200).height(675).url()}
-              alt=""
+              alt={intro.heading || "L'élevage De Saint Prixe"}
               class="w-full h-full object-cover"
             />
           </div>
@@ -56,7 +56,7 @@ const lastSectionIsAlt = rest.length > 0 ? (rest.length - 1) % 2 === 0 : false;
               <div class="w-32 h-32 md:w-36 md:h-36 mx-auto mb-5 rounded-full overflow-hidden border-[4px] border-white shadow-[0_8px_20px_rgba(0,0,0,0.18)] bg-placeholder">
                 <img
                   src={urlFor(s.image)?.width(300).height(300).url()}
-                  alt=""
+                  alt={s.heading || 'De Saint Prixe'}
                   class="w-full h-full object-cover"
                 />
               </div>

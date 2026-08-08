@@ -97,7 +97,7 @@ const outlineBtnClass = isAlt
               {p.coverImage && (
                 <img
                   src={urlFor(p.coverImage)?.width(500).height(375).url()}
-                  alt=""
+                  alt={p.title}
                   loading="lazy"
                   class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />

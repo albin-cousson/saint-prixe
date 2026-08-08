@@ -1,6 +1,8 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { sanityClient } from 'sanity:client';
+import { SITE_SETTINGS_QUERY } from '../lib/sanity/queries';
 import '../styles/global.css';
 
 interface Props {
@@ -8,13 +10,48 @@ interface Props {
   description?: string;
   image?: string;
   footerBg?: 'cream' | 'ink';
+  type?: 'website' | 'article';
+  noindex?: boolean;
 }
 const {
   title,
   description = 'Élevage De Saint Prixe — Bearded Collie et Shih Tzu, en Alsace.',
   image,
   footerBg = 'ink',
+  type = 'website',
+  noindex = false,
 } = Astro.props;
+
+const settings = await sanityClient.fetch(SITE_SETTINGS_QUERY);
+const siteName = settings?.siteName || 'De Saint Prixe';
+const fullTitle = `${title} | ${siteName}`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const addressText: string = settings?.address || "24 rue d'Issenheim\n68190 Raedersheim, France";
+const addressMatch = addressText.match(/^(.+)\n(\d{5})\s+([^,]+),\s*(.+)$/);
+const addressSchema = addressMatch
+  ? {
+      '@type': 'PostalAddress',
+      streetAddress: addressMatch[1],
+      postalCode: addressMatch[2],
+      addressLocality: addressMatch[3],
+      addressCountry: 'FR',
+    }
+  : addressText.replace(/\n/g, ', ');
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: siteName,
+  description: settings?.tagline || 'Élevage de Bearded Collies',
+  url: Astro.site?.toString(),
+  ...(settings?.phone && { telephone: settings.phone }),
+  ...(settings?.email && { email: settings.email }),
+  address: addressSchema,
+  ...(settings?.socialLinks?.length > 0 && {
+    sameAs: settings.socialLinks.map((s: { url: string }) => s.url),
+  }),
+};
 ---
 
 <!doctype html>
@@ -23,13 +60,56 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title} | De Saint Prixe</title>
+
+    <!-- Loaded async (preload + swap) so this stylesheet never blocks first paint;
+         font-display=swap in the URL means text renders immediately with a fallback
+         font and swaps in Libre Baskerville once it arrives. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap"
+      />
+    </noscript>
+
+    <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <meta property="og:title" content={`${title} | De Saint Prixe`} />
+
+    <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content="fr_FR" />
     {image && <meta property="og:image" content={image} />}
+
     <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    {image && <meta name="twitter:image" content={image} />}
+
+    <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
+
+    {settings?.gaMeasurementId && (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${settings.gaMeasurementId}`}></script>
+        <script define:vars={{ gaId: settings.gaMeasurementId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', gaId);
+        </script>
+      </>
+    )}
   </head>
   <body>
     <Header />

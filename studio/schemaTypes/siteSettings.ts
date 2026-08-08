@@ -64,5 +64,12 @@ export default defineType({
         },
       ],
     }),
+    defineField({
+      name: 'gaMeasurementId',
+      title: 'ID de mesure Google Analytics',
+      description: 'Format G-XXXXXXXXXX, depuis analytics.google.com. Laisser vide pour désactiver le suivi.',
+      type: 'string',
+      validation: (Rule) => Rule.regex(/^G-[A-Z0-9]+$/, {name: 'GA4', invert: false}).warning('Format attendu : G-XXXXXXXXXX'),
+    }),
   ],
 })

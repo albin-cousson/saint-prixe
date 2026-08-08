@@ -18,7 +18,8 @@ const mariages = await sanityClient.fetch(MARIAGES_WITH_CHIOTS_QUERY);
 ---
 
 <Layout
-  title="Accueil"
+  title="Élevage de Bearded Collies en Alsace"
+  description="Élevage familial De Saint Prixe, Bearded Collies en Alsace (68) : découvrez nos chiens, nos portées et nos chiots disponibles."
   image={home?.heroImage ? urlFor(home.heroImage)?.width(1200).height(630).url() : undefined}
   footerBg="ink"
 >
@@ -27,7 +28,8 @@ const mariages = await sanityClient.fetch(MARIAGES_WITH_CHIOTS_QUERY);
       <div class="absolute inset-0 lg:hidden">
         <img
           src={urlFor(home.heroImage)?.width(900).height(1100).url()}
-          alt=""
+          alt="Élevage De Saint Prixe — Bearded Collies en Alsace"
+          fetchpriority="high"
           class="w-full h-full object-cover"
         />
         <div class="absolute inset-0 bg-ink/60"></div>
@@ -52,7 +54,8 @@ const mariages = await sanityClient.fetch(MARIAGES_WITH_CHIOTS_QUERY);
         <div class="hidden lg:block h-[560px]">
           <img
             src={urlFor(home.heroImage)?.width(900).height(1100).url()}
-            alt=""
+            alt="Élevage De Saint Prixe — Bearded Collies en Alsace"
+            fetchpriority="high"
             class="w-full h-full object-cover"
           />
         </div>

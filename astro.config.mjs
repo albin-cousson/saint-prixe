@@ -6,6 +6,7 @@ import { loadEnv } from 'vite';
 
 import sanity from '@sanity/astro';
 import react from '@astrojs/react';
+import sitemap from '@astrojs/sitemap';
 
 // astro.config.mjs runs before Astro's own env loading, so PUBLIC_* vars
 // must be read via Vite's loadEnv here rather than import.meta.env.
@@ -17,7 +18,7 @@ const { PUBLIC_SANITY_PROJECT_ID, PUBLIC_SANITY_DATASET } = loadEnv(
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://www.elevagedesaintprixe.com',
+  site: 'https://elevagedesaintprixe.com',
   vite: {
     plugins: [tailwindcss()],
   },
@@ -30,5 +31,8 @@ export default defineConfig({
       useCdn: true,
     }),
     react(),
+    sitemap({
+      filter: (page) => !page.includes('/404'),
+    }),
   ],
 });

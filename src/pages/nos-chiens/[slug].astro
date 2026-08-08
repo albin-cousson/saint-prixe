@@ -24,7 +24,7 @@ const stats = [
 ---
 
 <Layout
-  title={dog.name}
+  title={`${dog.name} — Bearded Collie`}
   description={`${dog.name} — Bearded Collie, élevage De Saint Prixe.`}
   image={dog.photo ? urlFor(dog.photo)?.width(1200).height(630).url() : undefined}
   footerBg="ink"
@@ -114,8 +114,13 @@ const stats = [
         {dog.gallery && dog.gallery.length > 0 && (
           <div class="columns-2 sm:columns-3 gap-3 space-y-3 text-left">
             {dog.gallery.map((img: any) => (
-              <a href={urlFor(img)?.width(1600).url()} data-lightbox={urlFor(img)?.width(1600).url()} class="block bg-placeholder">
-                <img src={urlFor(img)?.width(600).url()} alt="" loading="lazy" class="w-full block" />
+              <a
+                href={urlFor(img)?.width(1600).url()}
+                data-lightbox={urlFor(img)?.width(1600).url()}
+                data-lightbox-alt={`Photo de ${dog.name}`}
+                class="block bg-placeholder"
+              >
+                <img src={urlFor(img)?.width(600).url()} alt={`Photo de ${dog.name}`} loading="lazy" class="w-full block" />
               </a>
             ))}
           </div>

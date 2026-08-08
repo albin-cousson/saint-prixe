@@ -29,7 +29,7 @@ const unavailable = puppies.length - available;
 
 <a href={`/nos-portees/${slug}`} class="group block bg-white border border-border p-9 pb-7 text-center text-ink transition-shadow hover:shadow-[0_12px_24px_rgba(59,59,59,0.1)]">
   <div class="mb-6">
-    <CoupleMedallion groomPhoto={dogGroomPhoto} bridePhoto={dogBridePhoto} size="card" />
+    <CoupleMedallion groomPhoto={dogGroomPhoto} bridePhoto={dogBridePhoto} groomName={dogGroomName} brideName={dogBrideName} size="card" />
   </div>
 
   <h3 class="font-display font-bold text-xl md:text-2xl leading-tight mb-1.5">
@@ -53,7 +53,7 @@ const unavailable = puppies.length - available;
               {p.photo && (
                 <img
                   src={urlFor(p.photo)?.width(150).height(150).url()}
-                  alt=""
+                  alt={p.title}
                   loading="lazy"
                   class:list={['w-full h-full object-cover', !ok && 'grayscale opacity-55']}
                 />

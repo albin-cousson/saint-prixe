@@ -26,14 +26,20 @@ const litterIsFuture = mariage.litterDate ? new Date(mariage.litterDate).getTime
 
 <Layout
   title={`${mariage.dogGroomName} & ${mariage.dogBrideName}`}
-  description={mariage.description}
+  description={mariage.description || `Portée de Bearded Collies de ${pairName} — élevage De Saint Prixe, Alsace.`}
   image={mariage.dogGroomPhoto ? urlFor(mariage.dogGroomPhoto)?.width(1200).height(630).url() : undefined}
 >
   <section class="bg-cream px-6 lg:px-10 py-16 md:py-20">
     <div class="max-w-4xl mx-auto">
       <div class="bg-white border border-border p-6 sm:p-10 md:p-12 text-center mb-16">
         <div class="mb-6">
-          <CoupleMedallion groomPhoto={mariage.dogGroomPhoto} bridePhoto={mariage.dogBridePhoto} size="hero" />
+          <CoupleMedallion
+            groomPhoto={mariage.dogGroomPhoto}
+            bridePhoto={mariage.dogBridePhoto}
+            groomName={mariage.dogGroomName}
+            brideName={mariage.dogBrideName}
+            size="hero"
+          />
         </div>
 
         <h1 class="font-display font-bold text-3xl md:text-4xl mb-1.5">
