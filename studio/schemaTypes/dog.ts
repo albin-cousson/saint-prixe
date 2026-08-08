@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {isUniqueSlug} from '../lib/isUniqueSlug'
+import {TitlesInput} from '../components/TitlesInput'
 
 export default defineType({
   name: 'dog',
@@ -43,7 +44,8 @@ export default defineType({
       title: 'Palmarès',
       type: 'array',
       of: [{type: 'string'}],
-      description: 'Un titre par ligne (facultatif)',
+      description: 'Collez ou tapez tous les titres d\'un coup, un par ligne — pas besoin d\'ajouter chaque ligne une par une.',
+      components: {input: TitlesInput},
     }),
     defineField({
       name: 'pedigreeFile',

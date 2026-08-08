@@ -20,11 +20,9 @@ export default defineConfig({
   },
 
   document: {
-    actions: (prev, context) =>
+    actions: (prev) =>
       prev.map((action) =>
-        action.action === 'publish'
-          ? createGallerySyncPublishAction(action, context.getClient)
-          : action,
+        action.action === 'publish' ? createGallerySyncPublishAction(action) : action,
       ),
   },
 
